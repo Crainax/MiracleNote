@@ -18,4 +18,11 @@
     <string name="login_login">请登录</string>
     <string name="login_hint_username">请输入帐号</string>
     <string name="login_hint_password">请输入密码</string>
+    <string name="signin_username">用户名</string>
+    <string name="signin_password">密码</string>
+    <string name="signin_password_confirm">确认密码</string>
+    <string name="signin_email">邮箱</string>
+    <string name="signin_phone">手机</string>
+    <string name="signin_identify">验证码</string>
+    <string name="signin_send_identify">发送验证码</string>
 </resources>

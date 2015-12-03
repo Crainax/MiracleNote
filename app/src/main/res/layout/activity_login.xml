@@ -10,6 +10,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/colorLogin"
+
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         />
 
     <LinearLayout
@@ -91,8 +94,8 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:text="注册"
-                    android:textColor="#fff"
-                    android:textSize="16sp" />
+                    style="@style/ButtonTextStyle"
+                    />
 
                 <Button
                     android:id="@+id/bt_login"
@@ -100,8 +103,8 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:text="登录"
-                    android:textColor="#fff"
-                    android:textSize="16sp" />
+                    style="@style/ButtonTextStyle"
+                    />
             </LinearLayout>
 
             <TextView

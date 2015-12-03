@@ -1,6 +1,6 @@
 package com.ruffneck.cloudnote.activity;
 
-import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
@@ -43,9 +43,9 @@ public class LoginActivity extends AppCompatActivity {
 
     @OnClick(R.id.bt_signin)
     void signIn(View bt){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        Intent intent = new Intent(this, SigninActivity.class);
+        startActivity(intent);
     }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
