@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <View
+        android:id="@+id/view_shelter"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorLogin"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/activity_login_head">
+
+            <TextView
+                android:id="@+id/tvWelcome"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:alpha="0"
+                android:gravity="center"
+                android:text="@string/login_welcome"
+                android:textColor="@color/colorWelcomeTextView"
+                android:textSize="16sp" />
+
+            <View
+                android:id="@+id/viewDivider"
+                style="@style/DividerTheme"
+                android:layout_width="80dp"
+                android:layout_height="1.0px"
+                android:layout_below="@+id/tvWelcome"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:scaleX="0" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_login"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="0"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dip"
+                android:gravity="center"
+                android:text="@string/login_login"
+                android:textColor="#ffbbbebf"
+                android:textSize="13sp" />
+
+            <EditText
+                android:id="@+id/et_username"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:hint="@string/login_hint_username" />
+
+            <EditText
+                android:id="@+id/et_password"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:hint="@string/login_hint_password"
+                android:inputType="textPassword" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/bt_signin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:text="注册"
+                    android:textColor="#fff"
+                    android:textSize="16sp" />
+
+                <Button
+                    android:id="@+id/bt_login"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:text="登录"
+                    android:textColor="#fff"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:gravity="center"
+                android:text="@string/login_more_platform"
+                android:textColor="#ffbbbebf"
+                android:textSize="13sp" />
+
+            <Button
+                android:id="@+id/bt_qq"
+                style="@style/TextView_Login_QQ"
+                android:layout_marginTop="24dip"
+                android:background="@drawable/selector_qqlogin"
+                android:text="QQ登录" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</RelativeLayout>
