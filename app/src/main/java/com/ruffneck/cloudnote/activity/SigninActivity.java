@@ -1,14 +1,22 @@
 package com.ruffneck.cloudnote.activity;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 
+import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVOSCloud;
+import com.avos.avoscloud.AVUser;
+import com.avos.avoscloud.SignUpCallback;
 import com.ruffneck.cloudnote.R;
+import com.ruffneck.cloudnote.info.Constant;
 
+import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 
@@ -26,16 +34,62 @@ public class SigninActivity extends AppCompatActivity {
     TextInputLayout tilEmail;
     @InjectView(R.id.til_phone)
     TextInputLayout tilPhone;
-    @InjectView(R.id.til_identify)
-    TextInputLayout tilIdentify;
-    @InjectView(R.id.bt_send_identify)
-    Button btSendIdentify;
-    TextInputLayout tilp;
+    private String username;
+    //    @InjectView(R.id.til_identify)
+//    TextInputLayout tilIdentify;
 
-    @OnClick(R.id.bt_send_identify)
-    void sendIdentify(View view){
+    /**
+     * Before sign in , check all the edit text is correct.
+     * @param view
+     */
+    @OnClick(R.id.fab_signin)
+    void signIn(final View view) {
+        checkUserName();
+        checkPassword();
+        checkEmail();
+        checkPhone();
 
+        if (!tilUsername.isErrorEnabled()
+                && !tilEmail.isErrorEnabled()
+                && !tilConfirm.isErrorEnabled()
+                && !tilPassword.isErrorEnabled()
+                && !tilPhone.isErrorEnabled()) {
+            AVUser user = new AVUser();
+            username = tilUsername.getEditText().getText().toString();
+            user.setUsername(username);
+            user.setPassword(tilPassword.getEditText().getText().toString());
+            user.setEmail(tilEmail.getEditText().getText().toString());
+            user.setMobilePhoneNumber(tilPhone.getEditText().getText().toString());
+
+            user.signUpInBackground(new SignUpCallback() {
+                @Override
+                public void done(AVException e) {
+                    if(e == null){
+                        Intent intent = new Intent();
+                        intent.putExtra("username",username);
+                        setResult(SigninActivity.RESULT_OK, intent);
+                        finish();
+                    }else{
+                        Snackbar.make(view, "注册失败!" + e.getMessage(), Snackbar.LENGTH_LONG).show();
+                        e.printStackTrace();
+                    }
+                }
+            });
+        } else {
+            Snackbar.make(view, "注册失败", Snackbar.LENGTH_LONG).show();
+        }
     }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        fullScreen();
+        setContentView(R.layout.activity_signin);
+        ButterKnife.inject(this);
+        AVOSCloud.initialize(this, Constant.LEANCLOUD_ID,Constant.LEANCLOUD_KEY);
+        initListener();
+    }
+
     /**
      * Set the listener to the edittext
      */
@@ -49,7 +103,7 @@ public class SigninActivity extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
-                    CheckUserName();
+                    checkUserName();
                 }
             }
         });
@@ -61,7 +115,7 @@ public class SigninActivity extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
-                    CheckPassword();
+                    checkPassword();
                 }
             }
         });
@@ -73,7 +127,7 @@ public class SigninActivity extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
-                    CheckPassword();
+                    checkPassword();
                 }
             }
         });
@@ -105,17 +159,17 @@ public class SigninActivity extends AppCompatActivity {
         /**
          * Identify's Listener.
          */
-        tilIdentify.getEditText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
+/*        tilIdentify.getEditText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
                     checkIdentify();
                 }
             }
-        });
+        });*/
     }
 
-    private void checkIdentify() {
+/*    private void checkIdentify() {
 
         String content = tilIdentify.getEditText().getText().toString();
         if (!TextUtils.isEmpty(content) && content.length() == 6) {
@@ -124,14 +178,14 @@ public class SigninActivity extends AppCompatActivity {
             tilIdentify.setErrorEnabled(true);
             tilIdentify.setError("验证码是6位数字");
         }
-    }
+    }*/
 
     private void checkPhone() {
 
         String content = tilPhone.getEditText().getText().toString();
         if (!TextUtils.isEmpty(content) && content.length() == 11) {
             tilPhone.setErrorEnabled(false);
-        } else{
+        } else {
             tilPhone.setErrorEnabled(true);
             tilPhone.setError("手机只能是11位数字");
         }
@@ -148,7 +202,7 @@ public class SigninActivity extends AppCompatActivity {
         }
     }
 
-    private void CheckPassword() {
+    private void checkPassword() {
         if (!isPasswordValid()) {
             tilPassword.setErrorEnabled(true);
             tilPassword.setError("密码必须6-16位");
@@ -162,7 +216,7 @@ public class SigninActivity extends AppCompatActivity {
             tilConfirm.setErrorEnabled(false);
     }
 
-    private void CheckUserName() {
+    private void checkUserName() {
         if (TextUtils.isEmpty(tilUsername.getEditText().getText())) {
             tilUsername.setErrorEnabled(true);
             tilUsername.setError("用户名不能为空");
