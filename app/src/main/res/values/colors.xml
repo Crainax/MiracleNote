@@ -4,8 +4,10 @@
     <color name="colorPrimaryDark">#3F51B5</color>
     <color name="colorAccent">#FF4081</color>
     <color name="colorDividerWhite">#fff</color>
+    <color name="colorDividerGray">@android:color/darker_gray</color>
 
     <color name="colorLogin">#00f</color>
     <!--The TextView's color that welcome in the login activity-->
     <color name="colorWelcomeTextView">#fff</color>
+    <color name="note_date_hint">#000</color>
 </resources>
