@@ -3,11 +3,19 @@ package com.ruffneck.cloudnote.models.note.attach;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.ruffneck.cloudnote.db.DBConstants;
+
 public class ImageAttach extends Attach implements Parcelable{
 
+    public ImageAttach() {
+    }
 
-    public ImageAttach(String localURL) {
-        this.localURL = localURL;
+    public ImageAttach(String localURL, int type, long noteId) {
+        super(localURL, type, noteId);
+    }
+
+    private void init() {
+        type = DBConstants.Type.TYPE_IMAGE;
     }
 
     public static final Creator<ImageAttach> CREATOR = new Creator<ImageAttach>() {
@@ -20,6 +28,7 @@ public class ImageAttach extends Attach implements Parcelable{
         public ImageAttach[] newArray(int size) {
             return new ImageAttach[size];
         }
+
     };
 
     protected ImageAttach(Parcel in) {
@@ -36,6 +45,7 @@ public class ImageAttach extends Attach implements Parcelable{
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(localURL);
         dest.writeString(netURL);
+        init();
     }
 
     @Override

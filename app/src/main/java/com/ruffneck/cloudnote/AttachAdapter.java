@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.ruffneck.cloudnote.models.note.attach.Attach;
-import com.ruffneck.cloudnote.models.note.attach.Note;
 
 import java.util.List;
 
@@ -26,11 +25,11 @@ public class AttachAdapter extends RecyclerView.Adapter<AttachAdapter.ViewHolder
 
 
     public interface OnItemClickListener {
-        void onItemClick(View view, int position);
+        void onItemClick(View view, Attach attach);
     }
 
     public interface OnItemLongClickListener {
-        void onItemLongClick(View view, int position);
+        void onItemLongClick(View view, Attach attach);
     }
 
     public interface OnMoreClickListener {
@@ -62,10 +61,6 @@ public class AttachAdapter extends RecyclerView.Adapter<AttachAdapter.ViewHolder
         initImageLoader();
     }
 
-    public AttachAdapter(Note note) {
-        this.attachList = note.getAttachList();
-        initImageLoader();
-    }
 
     /**
      * Initialize the image loader.
@@ -93,14 +88,14 @@ public class AttachAdapter extends RecyclerView.Adapter<AttachAdapter.ViewHolder
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         if (position == attachList.size()) {
-            loader.displayImage("drawable://"+R.drawable.ic_add_pic,holder.imageView,options);
+            loader.displayImage("drawable://" + R.drawable.ic_add_pic, holder.imageView, options);
         } else {
 //            int maxSize = 1024 * 1024 * 100;
 //            Picasso picasso = new Picasso.Builder(holder.itemView.getContext())
 //                    .memoryCache(new LruCache(maxSize))
 //                    .build();
 
-            loader.displayImage("file://"+attachList.get(position).localURL,holder.imageView,options);
+            loader.displayImage("file://" + attachList.get(position).localURL, holder.imageView, options);
         }
 
         bindClickListener(holder.itemView, position);
@@ -135,14 +130,14 @@ public class AttachAdapter extends RecyclerView.Adapter<AttachAdapter.ViewHolder
                 @Override
                 public void onClick(View v) {
                     if (onItemClickListener != null)
-                        onItemClickListener.onItemClick(v, position);
+                        onItemClickListener.onItemClick(v, attachList.get(position));
                 }
             });
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
                     if (onItemLongClickListener != null)
-                        onItemLongClickListener.onItemLongClick(v, position);
+                        onItemLongClickListener.onItemLongClick(v, attachList.get(position));
                     return true;
                 }
             });
@@ -162,5 +157,9 @@ public class AttachAdapter extends RecyclerView.Adapter<AttachAdapter.ViewHolder
             super(ImageView);
             imageView = (ImageView) ImageView.findViewById(R.id.iv_album);
         }
+    }
+
+    public void notifyItemInsertedEnd(){
+        notifyItemInserted(attachList.size()-1);
     }
 }

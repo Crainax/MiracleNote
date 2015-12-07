@@ -1,20 +1,20 @@
-package com.ruffneck.cloudnote.models.note.attach;
+package com.ruffneck.cloudnote.models.note;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Date;
 
 public class Note implements Parcelable{
 
-    private List<Attach> attachList = new ArrayList<>();
     private String title;
     private String content;
+    private long id;
+    private Date modify;
+    private Date create;
+    private Date alarm;
+    private int notebook;
 
-    public List<Attach> getAttachList() {
-        return attachList;
-    }
 
     public Note(){
 
@@ -50,6 +50,38 @@ public class Note implements Parcelable{
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public Date getModify() {
+        return modify;
+    }
+
+    public void setModify(Date modify) {
+        this.modify = modify;
+    }
+
+    public Date getCreate() {
+        return create;
+    }
+
+    public void setCreate(Date create) {
+        this.create = create;
+    }
+
+    public Date getAlarm() {
+        return alarm;
+    }
+
+    public void setAlarm(Date alarm) {
+        this.alarm = alarm;
     }
 
     @Override

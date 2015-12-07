@@ -1,12 +1,12 @@
 package com.ruffneck.cloudnote.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.TextInputLayout;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -17,8 +17,17 @@ import android.widget.Toast;
 
 import com.ruffneck.cloudnote.AttachAdapter;
 import com.ruffneck.cloudnote.R;
+import com.ruffneck.cloudnote.db.AttachDAO;
+import com.ruffneck.cloudnote.db.DBConstants;
+import com.ruffneck.cloudnote.db.NoteDAO;
+import com.ruffneck.cloudnote.models.note.Note;
+import com.ruffneck.cloudnote.models.note.attach.Attach;
 import com.ruffneck.cloudnote.models.note.attach.ImageAttach;
-import com.ruffneck.cloudnote.models.note.attach.Note;
+import com.ruffneck.cloudnote.utils.AlertDialogUtils;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -32,8 +41,6 @@ public class NewActivity extends BaseActivity {
     Toolbar toolbar;
     @InjectView(R.id.til_title)
     TextInputLayout tilTitle;
-    @InjectView(R.id.cardview)
-    CardView cardview;
     @InjectView(R.id.til_content)
     TextInputLayout tilContent;
     @InjectView(R.id.iv_alarm)
@@ -43,23 +50,71 @@ public class NewActivity extends BaseActivity {
     @InjectView(R.id.rv_attach)
     RecyclerView rvAttach;
 
-    private Note note = new Note();
-    private AttachAdapter attachAdapter = new AttachAdapter(note);
+    private AttachDAO attachDAO;
+    private NoteDAO noteDAO;
+
+    private Note note = null;
+
+    private List<Attach> attachList= new ArrayList<>();
+    private AttachAdapter attachAdapter = new AttachAdapter(attachList);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_note);
         ButterKnife.inject(this);
+
+        attachDAO = AttachDAO.getInstance(this);
+        noteDAO = NoteDAO.getInstance(this);
+
+        initNoteInfo();
+
+        initToolbar();
+
         initRecyclerViewAdapter();
     }
 
+    private void initNoteInfo() {
+        if (note == null) {
+            note = new Note();
+            long id = noteDAO.insert(note);
+            note.setId(id);
+            System.out.println("NewActivity.initNoteInfo");
+        }
+    }
+
+    /**
+     * Initialize the toolbar.
+     */
+    private void initToolbar() {
+        toolbar.setNavigationIcon(R.drawable.ic_action_ok);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialogUtils.show(NewActivity.this, "确认", "确认离开吗?", "确认", "取消", new AlertDialogUtils.OkCallBack() {
+                    @Override
+                    public void onOkClick(DialogInterface dialog, int which) {
+                        saveNote();
+                        noteDAO.update(note);
+                        dialog.dismiss();
+                    }
+                }, null);
+            }
+        });
+    }
+
+    private void saveNote() {
+        note.setTitle(tilTitle.getEditText().getText().toString());
+        note.setContent(tilContent.getEditText().getText().toString());
+        note.setCreate(new Date());
+        note.setModify(new Date());
+    }
 
     /**
      * Initialize the attack recyclerView in the card.
      */
     private void initRecyclerViewAdapter() {
-        rvAttach.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
+        rvAttach.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         rvAttach.setAdapter(attachAdapter);
         attachAdapter.setOnMoreClickListener(new AttachAdapter.OnMoreClickListener() {
             @Override
@@ -70,8 +125,8 @@ public class NewActivity extends BaseActivity {
         });
         attachAdapter.setOnItemClickListener(new AttachAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(View view, int position) {
-                Toast.makeText(NewActivity.this, note.getAttachList().get(position).localURL, Toast.LENGTH_SHORT).show();
+            public void onItemClick(View view,  Attach attach) {
+                Toast.makeText(NewActivity.this, attach.localURL, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -87,10 +142,13 @@ public class NewActivity extends BaseActivity {
 
                 while (cursor.moveToNext()) {
                     String pathUri = cursor.getString(0);
-                    System.out.println("pathUri = " + pathUri);
-                    note.getAttachList().add(new ImageAttach(pathUri));
-                    System.out.println("note.getAttachList() = " + note.getAttachList());
-                    attachAdapter.notifyDataSetChanged();
+//                    System.out.println("pathUri = " + pathUri);
+                    ImageAttach newAttach = new ImageAttach(pathUri, DBConstants.Type.TYPE_IMAGE, note.getId());
+                    attachList.add(newAttach);
+//                    System.out.println("note.getAttachList() = " + note.getAttachList());
+//                    attachAdapter.notifyDataSetChanged();
+                    attachAdapter.notifyItemInsertedEnd();
+                    attachDAO.insertUpdate(newAttach);
                 }
 
                 cursor.close();
@@ -99,4 +157,5 @@ public class NewActivity extends BaseActivity {
 
         super.onActivityResult(requestCode, resultCode, data);
     }
+
 }

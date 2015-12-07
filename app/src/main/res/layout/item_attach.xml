@@ -15,4 +15,5 @@
         android:cropToPadding="false"
         android:scaleType="centerCrop"
         android:src="@android:drawable/ic_menu_edit" />
+
 </RelativeLayout>
