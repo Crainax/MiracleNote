@@ -39,4 +39,5 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:23.1.1'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile files('libs/universal-image-loader-1.9.5.jar')
+    compile 'de.hdodenhof:circleimageview:2.0.0'
 }

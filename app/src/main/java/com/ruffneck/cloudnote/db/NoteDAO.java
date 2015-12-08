@@ -18,7 +18,6 @@ public class NoteDAO {
     public synchronized static NoteDAO getInstance(Context context) {
         if (noteDAO == null)
             noteDAO = new NoteDAO(context);
-
         return noteDAO;
     }
 
@@ -39,8 +38,6 @@ public class NoteDAO {
 
         ContentValues values = new ContentValues();
 
-        if (note.getId() != 0)
-            values.put(DBConstants.Note.COLUMN_ID, note.getId());
         values.put(DBConstants.Note.COLUMN_TITLE, note.getTitle());
         values.put(DBConstants.Note.COLUMN_CONTENT, note.getContent());
         if (note.getAlarm() != null)
@@ -51,6 +48,7 @@ public class NoteDAO {
             values.put(DBConstants.Note.COLUMN_DATE_MODIFY, note.getModify().getTime());
 
         long id = database.insert(DBConstants.Note.TABLE_NAME, null, values);
+        note.setId(id);
         close();
 
         return id;

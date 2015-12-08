@@ -38,13 +38,12 @@ public class AttachDAO {
 
         ContentValues values = new ContentValues();
 
-        if (attach.getId() != 0)
-            values.put(DBConstants.Attach.COLUMN_ID, attach.getId());
         values.put(DBConstants.Attach.COLUMN_TYPE_ID, attach.getType());
         values.put(DBConstants.Attach.COLUMN_LOCAL_URL, attach.localURL);
         values.put(DBConstants.Attach.COLUMN_NOTE, attach.getNoteId());
 
         long id = database.insert(DBConstants.Attach.TABLE_NAME, null, values);
+        attach.setId(id);
         close();
 
         return id;

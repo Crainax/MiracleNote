@@ -9,7 +9,8 @@ import android.provider.MediaStore;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -37,8 +38,6 @@ public class NewActivity extends BaseActivity {
 
     private static final int REQUEST_IMAGE = 0x000001;
 
-    @InjectView(R.id.toolbar)
-    Toolbar toolbar;
     @InjectView(R.id.til_title)
     TextInputLayout tilTitle;
     @InjectView(R.id.til_content)
@@ -55,21 +54,18 @@ public class NewActivity extends BaseActivity {
 
     private Note note = null;
 
-    private List<Attach> attachList= new ArrayList<>();
+    private List<Attach> attachList = new ArrayList<>();
     private AttachAdapter attachAdapter = new AttachAdapter(attachList);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_note);
         ButterKnife.inject(this);
 
         attachDAO = AttachDAO.getInstance(this);
         noteDAO = NoteDAO.getInstance(this);
 
         initNoteInfo();
-
-        initToolbar();
 
         initRecyclerViewAdapter();
     }
@@ -86,21 +82,39 @@ public class NewActivity extends BaseActivity {
     /**
      * Initialize the toolbar.
      */
-    private void initToolbar() {
-        toolbar.setNavigationIcon(R.drawable.ic_action_ok);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+    @Override
+    protected void initToolbar() {
+        super.initToolbar();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_new, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
                 AlertDialogUtils.show(NewActivity.this, "确认", "确认离开吗?", "确认", "取消", new AlertDialogUtils.OkCallBack() {
                     @Override
                     public void onOkClick(DialogInterface dialog, int which) {
-                        saveNote();
-                        noteDAO.update(note);
-                        dialog.dismiss();
+                        finish();
                     }
                 }, null);
-            }
-        });
+                break;
+            case R.id.action_save:
+                saveNote();
+                noteDAO.update(note);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected int setContentResId() {
+        return R.layout.activity_new_note;
     }
 
     private void saveNote() {
@@ -125,7 +139,7 @@ public class NewActivity extends BaseActivity {
         });
         attachAdapter.setOnItemClickListener(new AttachAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(View view,  Attach attach) {
+            public void onItemClick(View view, Attach attach) {
                 Toast.makeText(NewActivity.this, attach.localURL, Toast.LENGTH_SHORT).show();
             }
         });

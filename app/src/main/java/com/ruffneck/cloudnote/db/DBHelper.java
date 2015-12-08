@@ -46,6 +46,36 @@ public class DBHelper extends SQLiteOpenHelper {
                 DBConstants.Type.COLUMN_TYPE + " text)");
 
 
+        //Insert the default data
+        db.execSQL("insert into " + DBConstants.NoteBook.TABLE_NAME + " values(?,?,?,?)",new Object[]{
+                DBConstants.NoteBook.ID_DEFAULT_NOTEBOOK,
+                DBConstants.NoteBook.DEFAULT_NOTEBOOK_NAME,
+                DBConstants.NoteBook.DEFAULT_NOTEBOOK_DETAIL,
+                DBConstants.NoteBook.DEFAULT_NOTEBOOK_COLOR
+        });
+
+        db.execSQL("insert into " + DBConstants.NoteBook.TABLE_NAME + " values(?,?,?,?)",new Object[]{
+                DBConstants.NoteBook.ID_RECYCLE_BIN,
+                DBConstants.NoteBook.RECYCLE_BIN_NAME,
+                DBConstants.NoteBook.RECYCLE_BIN_DETAIL,
+                DBConstants.NoteBook.RECYCLE_BIN_COLOR
+        });
+
+        db.execSQL("insert into " + DBConstants.Type.TABLE_NAME + " values(?,?)",new Object[]{
+                DBConstants.Type.TYPE_IMAGE,
+                DBConstants.Type.NAME_IMAGE,
+        });
+
+
+//        db.execSQL("insert into " + DBConstants.NoteBook.TABLE_NAME + " values(" +
+//                DBConstants.NoteBook.RECYCLE_BIN_NAME + "," +
+//                DBConstants.NoteBook.RECYCLE_BIN_DETAIL + "," +
+//                DBConstants.NoteBook.RECYCLE_BIN_COLOR + ")");
+//
+//        db.execSQL("insert into " + DBConstants.Type.TABLE_NAME + " values(" +
+//                DBConstants.Type.TYPE_IMAGE + "," +
+//                DBConstants.Type.NAME_IMAGE + ")");
+
     }
 
     @Override

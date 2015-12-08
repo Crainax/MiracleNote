@@ -29,4 +29,8 @@
     <string name="note_date_create">创建于:12月5日 13:51</string>
     <string name="note_date_update">更新于:12月5日 13:54</string>
     <string name="note_hint_link">附件</string>
+    <string name="menu_drawer_options">选项</string>
+    <string name="open_drewer">打开侧滑界面</string>
+    <string name="close_drawer">关闭侧滑界面</string>
+    <string name="submenu_title_notebook">我的笔记本</string>
 </resources>

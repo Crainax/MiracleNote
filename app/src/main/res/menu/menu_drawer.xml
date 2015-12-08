@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:orderInCategory="10000"
+        android:title="@string/menu_drawer_options">
+        <menu>
+            <item
+                android:id="@+id/action_setting"
+                android:checkable="true"
+                android:icon="@drawable/ic_settings_black_24dp"
+                android:title="设置" />
+            <item
+                android:id="@+id/action_user_info"
+                android:checkable="true"
+                android:icon="@drawable/ic_info_black_24dp"
+                android:title="用户信息" />
+            <item
+                android:id="@+id/action_exit"
+                android:checkable="true"
+                android:icon="@drawable/ic_exit_to_app_black_24dp"
+                android:title="退出登录" />
+
+        </menu>
+    </item>
+
+</menu>

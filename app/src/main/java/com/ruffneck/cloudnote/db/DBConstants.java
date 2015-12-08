@@ -11,6 +11,14 @@ public class DBConstants  {
         public static final String COLUMN_COLOR = "color";
         public static final String COLUMN_DETAIL = "detail";
         public static final String TABLE_NAME = "notebook";
+        public static final int ID_DEFAULT_NOTEBOOK = 1;
+        public static final int ID_RECYCLE_BIN = 2;
+        public static final String DEFAULT_NOTEBOOK_NAME = "默认笔记本";
+        public static final String RECYCLE_BIN_NAME = "回收站";
+        public static final String DEFAULT_NOTEBOOK_DETAIL = "存放未归类笔记的默认笔记本";
+        public static final String DEFAULT_NOTEBOOK_COLOR = "ffffff";
+        public static final String RECYCLE_BIN_DETAIL = "存放已经回收的笔记";
+        public static final String RECYCLE_BIN_COLOR = "ffffff";
     }
 
     /**
@@ -34,6 +42,7 @@ public class DBConstants  {
         public static final String COLUMN_ID = "_id";
         public static final String COLUMN_TYPE = "type";
         public static final int TYPE_IMAGE = 0x001;
+        public static final String NAME_IMAGE = "image";
         public static final String TABLE_NAME = "type";
     }
 

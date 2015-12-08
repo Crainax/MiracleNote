@@ -21,6 +21,7 @@ public class AlertDialogUtils {
                     if (okCallBack != null) {
                         okCallBack.onOkClick(dialog, which);
                     }
+                    dialog.dismiss();
                 }
             });
         if (!TextUtils.isEmpty(ok))

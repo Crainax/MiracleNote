@@ -5,17 +5,17 @@ package com.ruffneck.cloudnote.models.note;
  */
 public class NoteBook {
 
-    private int id;
+    private long id = 1;
     private String name;
     private String color;
     private String detail;
 
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
