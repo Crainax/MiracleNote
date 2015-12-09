@@ -18,9 +18,7 @@ import android.widget.Toast;
 
 import com.ruffneck.cloudnote.AttachAdapter;
 import com.ruffneck.cloudnote.R;
-import com.ruffneck.cloudnote.db.AttachDAO;
 import com.ruffneck.cloudnote.db.DBConstants;
-import com.ruffneck.cloudnote.db.NoteDAO;
 import com.ruffneck.cloudnote.models.note.Note;
 import com.ruffneck.cloudnote.models.note.attach.Attach;
 import com.ruffneck.cloudnote.models.note.attach.ImageAttach;
@@ -49,8 +47,6 @@ public class NewActivity extends BaseActivity {
     @InjectView(R.id.rv_attach)
     RecyclerView rvAttach;
 
-    private AttachDAO attachDAO;
-    private NoteDAO noteDAO;
 
     private Note note = null;
 
@@ -62,8 +58,6 @@ public class NewActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
 
-        attachDAO = AttachDAO.getInstance(this);
-        noteDAO = NoteDAO.getInstance(this);
 
         initNoteInfo();
 

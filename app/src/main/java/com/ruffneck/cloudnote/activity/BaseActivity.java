@@ -6,17 +6,31 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import com.ruffneck.cloudnote.R;
+import com.ruffneck.cloudnote.db.AttachDAO;
+import com.ruffneck.cloudnote.db.NoteBookDAO;
+import com.ruffneck.cloudnote.db.NoteDAO;
 
 public abstract class BaseActivity extends AppCompatActivity{
 
     private Toolbar toolbar;
     private ActionBar actionBar;
-
+    protected NoteBookDAO noteBookDAO;
+    protected AttachDAO attachDAO;
+    protected NoteDAO noteDAO;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(setContentResId());
         initToolbar();
+
+        initDAO();
+    }
+
+    private void initDAO() {
+
+        noteBookDAO = NoteBookDAO.getInstance(this);
+        attachDAO = AttachDAO.getInstance(this);
+        noteDAO = NoteDAO.getInstance(this);
     }
 
     protected void initToolbar(){

@@ -16,9 +16,9 @@ public class DBConstants  {
         public static final String DEFAULT_NOTEBOOK_NAME = "默认笔记本";
         public static final String RECYCLE_BIN_NAME = "回收站";
         public static final String DEFAULT_NOTEBOOK_DETAIL = "存放未归类笔记的默认笔记本";
-        public static final String DEFAULT_NOTEBOOK_COLOR = "ffffff";
+        public static final long DEFAULT_NOTEBOOK_COLOR = 0xffffff;
         public static final String RECYCLE_BIN_DETAIL = "存放已经回收的笔记";
-        public static final String RECYCLE_BIN_COLOR = "ffffff";
+        public static final long RECYCLE_BIN_COLOR = 0xffffff;
     }
 
     /**

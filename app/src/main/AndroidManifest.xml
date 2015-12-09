@@ -28,8 +28,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.NewActivity">
-
         </activity>
+        <activity android:name=".activity.NewBookActivity"/>
     </application>
 
 </manifest>

@@ -38,7 +38,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 DBConstants.NoteBook.COLUMN_ID + " integer primary key autoincrement," +
                 DBConstants.NoteBook.COLUMN_NAME + " text," +
                 DBConstants.NoteBook.COLUMN_DETAIL + " text," +
-                DBConstants.NoteBook.COLUMN_COLOR + " text)");
+                DBConstants.NoteBook.COLUMN_COLOR + " long)");
 
         db.execSQL("create table " +
                 DBConstants.Type.TABLE_NAME + "(" +
