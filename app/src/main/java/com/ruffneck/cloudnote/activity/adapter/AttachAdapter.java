@@ -1,28 +1,23 @@
-package com.ruffneck.cloudnote;
+package com.ruffneck.cloudnote.activity.adapter;
 
-import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
+import com.ruffneck.cloudnote.R;
 import com.ruffneck.cloudnote.models.note.attach.Attach;
 
 import java.util.List;
 
-public class AttachAdapter extends RecyclerView.Adapter<AttachAdapter.ViewHolder> {
+public class AttachAdapter extends ImageLoaderAdapter<AttachAdapter.ViewHolder> {
 
     private List<Attach> attachList;
     private OnMoreClickListener onMoreClickListener;
     private OnMoreLongClickListener onMoreLongClickListener;
     private OnItemClickListener onItemClickListener;
     private OnItemLongClickListener onItemLongClickListener;
-    private ImageLoader loader;
-    private DisplayImageOptions options;
-
 
     public interface OnItemClickListener {
         void onItemClick(View view, Attach attach);
@@ -58,24 +53,9 @@ public class AttachAdapter extends RecyclerView.Adapter<AttachAdapter.ViewHolder
 
     public AttachAdapter(List<Attach> attachList) {
         this.attachList = attachList;
-        initImageLoader();
     }
 
 
-    /**
-     * Initialize the image loader.
-     */
-    private void initImageLoader() {
-        loader = ImageLoader.getInstance();
-        options = new DisplayImageOptions.Builder()
-                .showImageOnLoading(R.drawable.pic_loading)
-                .showImageOnFail(R.drawable.pic_loading)
-                .showImageOnFail(R.drawable.pic_loading)
-                .cacheInMemory(true)
-                .cacheOnDisk(true)
-                .bitmapConfig(Bitmap.Config.RGB_565)
-                .build();
-    }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

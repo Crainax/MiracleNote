@@ -10,4 +10,8 @@
     <!--The TextView's color that welcome in the login activity-->
     <color name="colorWelcomeTextView">#fff</color>
     <color name="note_date_hint">#000</color>
+    <color name="wathetText">#0077ff</color>
+    <color name="textTitle">#222222</color>
+    <color name="textContent">#aaaaaa</color>
+    <color name="update_time">#f70</color>
 </resources>

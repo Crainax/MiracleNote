@@ -13,16 +13,37 @@ public class Note implements Parcelable{
     private Date modify;
     private Date create;
     private Date alarm;
-    private int notebook;
+    private int notebook = 1;
 
 
     public Note(){
 
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Note note = (Note) o;
+
+        return id == note.id;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (id ^ (id >>> 32));
+    }
+
     protected Note(Parcel in) {
         title = in.readString();
         content = in.readString();
+        id= in.readLong();
+        notebook = in.readInt();
+        create = new Date(in.readLong());
+        modify = new Date(in.readLong());
+        alarm = new Date(in.readLong());
     }
 
     public static final Creator<Note> CREATOR = new Creator<Note>() {
@@ -84,6 +105,14 @@ public class Note implements Parcelable{
         this.alarm = alarm;
     }
 
+    public int getNotebook() {
+        return notebook;
+    }
+
+    public void setNotebook(int notebook) {
+        this.notebook = notebook;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -93,5 +122,10 @@ public class Note implements Parcelable{
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(title);
         dest.writeString(content);
+        dest.writeLong(id);
+        dest.writeInt(notebook);
+        dest.writeLong(create.getTime());
+        dest.writeLong(modify.getTime());
+        dest.writeLong(alarm.getTime());
     }
 }

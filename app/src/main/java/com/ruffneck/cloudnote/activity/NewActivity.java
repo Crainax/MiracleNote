@@ -14,15 +14,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ruffneck.cloudnote.AttachAdapter;
 import com.ruffneck.cloudnote.R;
+import com.ruffneck.cloudnote.activity.adapter.AttachAdapter;
 import com.ruffneck.cloudnote.db.DBConstants;
 import com.ruffneck.cloudnote.models.note.Note;
 import com.ruffneck.cloudnote.models.note.attach.Attach;
 import com.ruffneck.cloudnote.models.note.attach.ImageAttach;
 import com.ruffneck.cloudnote.utils.AlertDialogUtils;
+import com.ruffneck.cloudnote.utils.FormatUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -46,6 +48,10 @@ public class NewActivity extends BaseActivity {
     RelativeLayout groupAlarm;
     @InjectView(R.id.rv_attach)
     RecyclerView rvAttach;
+    @InjectView(R.id.tv_note_create)
+    TextView tvNoteCreate;
+    @InjectView(R.id.tv_note_modify)
+    TextView tvNoteModify;
 
 
     private Note note = null;
@@ -58,18 +64,31 @@ public class NewActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
 
-
         initNoteInfo();
 
         initRecyclerViewAdapter();
     }
 
     private void initNoteInfo() {
+
+        Intent intent = getIntent();
+        note = intent.getParcelableExtra("note");
+
         if (note == null) {
             note = new Note();
             long id = noteDAO.insert(note);
             note.setId(id);
             System.out.println("NewActivity.initNoteInfo");
+            tvNoteCreate.setVisibility(View.GONE);
+            tvNoteModify.setVisibility(View.GONE);
+        } else {
+            tilTitle.getEditText().setText(note.getTitle());
+            tilContent.getEditText().setText(note.getContent());
+
+            //Initialize the text view of the date : create and modify.
+            tvNoteCreate.setText("创建于:" + FormatUtils.formatDate(note.getCreate()));
+            tvNoteModify.setText("修改于:" + FormatUtils.formatDate(note.getModify()));
+
         }
     }
 
@@ -101,6 +120,10 @@ public class NewActivity extends BaseActivity {
             case R.id.action_save:
                 saveNote();
                 noteDAO.update(note);
+                Intent intent = new Intent();
+                intent.putExtra("note",note);
+                setResult(RESULT_OK,intent);
+                finish();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -114,7 +137,8 @@ public class NewActivity extends BaseActivity {
     private void saveNote() {
         note.setTitle(tilTitle.getEditText().getText().toString());
         note.setContent(tilContent.getEditText().getText().toString());
-        note.setCreate(new Date());
+        if (note.getCreate() == null)
+            note.setCreate(new Date());
         note.setModify(new Date());
     }
 
