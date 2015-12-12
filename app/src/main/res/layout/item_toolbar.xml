@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:theme="@android:style/ThemeOverlay.Material.Light"
-    app:title=""
+    app:title=" "
     android:fitsSystemWindows="true"
     android:background="@color/colorPrimary"
     android:id="@+id/toolbar"

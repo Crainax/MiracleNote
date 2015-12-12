@@ -22,14 +22,19 @@
         </activity>
         <activity android:name=".activity.SigninActivity"/>
         <activity android:name=".activity.MainActivity">
+        </activity>
+        <activity android:name=".activity.NewActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.NewActivity">
+        <activity android:name=".activity.NewBookActivity"
+            android:theme="@style/AppTheme"
+            />
+        <activity android:name=".activity.DoodleActivity">
+
         </activity>
-        <activity android:name=".activity.NewBookActivity"/>
     </application>
 
 </manifest>
