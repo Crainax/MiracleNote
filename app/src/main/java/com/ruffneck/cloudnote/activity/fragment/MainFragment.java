@@ -1,0 +1,38 @@
+package com.ruffneck.cloudnote.activity.fragment;
+
+import android.app.Fragment;
+import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
+
+import com.ruffneck.cloudnote.activity.MainActivity;
+
+public abstract class MainFragment extends Fragment {
+
+    protected Toolbar toolbar;
+    protected ActionBar actionBar;
+    private FloatingActionButton fab;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        toolbar = ((MainActivity) getActivity()).getToolbar();
+        actionBar = ((MainActivity) getActivity()).getNewActionBar();
+        fab = ((MainActivity) getActivity()).getFab();
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onFabClick(fab);
+            }
+        });
+        initFab(fab);
+
+    }
+
+    public abstract void onFabClick(FloatingActionButton fab);
+
+    public abstract void initFab(FloatingActionButton fab);
+
+}

@@ -1,12 +1,12 @@
 package com.ruffneck.cloudnote.activity.fragment;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,6 +20,7 @@ import com.ruffneck.cloudnote.activity.MainActivity;
 import com.ruffneck.cloudnote.activity.NewActivity;
 import com.ruffneck.cloudnote.activity.adapter.DividerItemDecoration;
 import com.ruffneck.cloudnote.activity.adapter.NoteAdapter;
+import com.ruffneck.cloudnote.db.DBConstants;
 import com.ruffneck.cloudnote.db.NoteBookDAO;
 import com.ruffneck.cloudnote.db.NoteDAO;
 import com.ruffneck.cloudnote.models.note.Note;
@@ -32,12 +33,13 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 
-public class NoteBookFragment extends Fragment {
+public class NoteBookFragment extends MainFragment {
 
     /**
      * Start the activity that edit thte note.
      */
     public static final int REQUEST_EDIT_NOTE = 0x124;
+    public static final int REQUEST_ADD_NOTE = 0x125;
     private List<Note> noteList;
     private NoteAdapter noteAdapter;
 
@@ -92,6 +94,18 @@ public class NoteBookFragment extends Fragment {
 
     }
 
+    @Override
+    public void onFabClick(FloatingActionButton fab) {
+        Intent intent = new Intent(getActivity(), NewActivity.class);
+        intent.putExtra(DBConstants.Note.COLUMN_NOTEBOOK,noteBook.getId());
+        startActivityForResult(intent, REQUEST_ADD_NOTE);
+    }
+
+    @Override
+    public void initFab(FloatingActionButton fab) {
+        fab.setImageResource(R.drawable.ic_add_white);
+    }
+
     private void initAdapter() {
         noteList = NoteDAO.getInstance(getActivity()).queryByNoteBookId(noteBook.getId());
         rvNote.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
@@ -126,13 +140,18 @@ public class NoteBookFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (resultCode == Activity.RESULT_OK) {
+            Note note;
             switch (requestCode) {
                 case REQUEST_EDIT_NOTE:
-                    System.out.println("2 = " + 2);
-                    Note note = data.getParcelableExtra("note");
+                    note = data.getParcelableExtra("note");
                     int index = noteList.indexOf(note);
                     noteList.set(index,note);
                     noteAdapter.notifyItemChanged(index);
+                    break;
+                case REQUEST_ADD_NOTE:
+                    note = data.getParcelableExtra("note");
+                    noteList.add(note);
+                    noteAdapter.notifyItemInserted(noteList.size());
                     break;
             }
         }

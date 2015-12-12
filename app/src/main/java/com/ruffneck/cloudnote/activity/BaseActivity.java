@@ -41,11 +41,11 @@ public abstract class BaseActivity extends AppCompatActivity{
         actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
-    protected ActionBar getNewActionBar(){
+    public ActionBar getNewActionBar(){
         return actionBar;
     }
 
-    protected Toolbar getToolbar(){
+    public Toolbar getToolbar(){
         return toolbar;
     }
 

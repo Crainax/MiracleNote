@@ -29,7 +29,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 DBConstants.Note.COLUMN_TITLE + " text," +
                 DBConstants.Note.COLUMN_CONTENT + " text," +
                 DBConstants.Note.COLUMN_DATE_ALARM + " long," +
-                DBConstants.Note.COLUMN_NOTEBOOK + " integer," +
+                DBConstants.Note.COLUMN_NOTEBOOK + " long," +
                 DBConstants.Note.COLUMN_DATE_CREATE + " long," +
                 DBConstants.Note.COLUMN_DATE_MODIFY + " long)");
 

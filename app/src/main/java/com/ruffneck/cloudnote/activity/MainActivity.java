@@ -1,10 +1,10 @@
 package com.ruffneck.cloudnote.activity;
 
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -15,6 +15,7 @@ import android.view.SubMenu;
 
 import com.ruffneck.cloudnote.R;
 import com.ruffneck.cloudnote.activity.fragment.AllNoteBookFragment;
+import com.ruffneck.cloudnote.activity.fragment.MainFragment;
 import com.ruffneck.cloudnote.activity.fragment.NoteBookFragment;
 import com.ruffneck.cloudnote.db.DBConstants;
 import com.ruffneck.cloudnote.models.note.NoteBook;
@@ -32,7 +33,18 @@ public class MainActivity extends BaseActivity {
     NavigationView nv;
     @InjectView(R.id.drawer)
     DrawerLayout drawer;
+    @InjectView(R.id.fab_main)
+    FloatingActionButton fabMain;
 
+//    public interface InitToolbar{
+//        void initToolbar(Toolbar toolbar);
+//    }
+//
+//    private InitToolbar toolbarComeback ;
+//
+//    public void setToolbarComeback(InitToolbar toolbarComeback) {
+//        this.toolbarComeback = toolbarComeback;
+//    }
 
     private SubMenu subMenu;
     private MenuItem mCurrentItem;
@@ -160,7 +172,7 @@ public class MainActivity extends BaseActivity {
     /**
      * set the drawer to the default selected state and the adapter.
      */
-    public void setDefaultFragment(){
+    public void setDefaultFragment() {
         setMainFragment(new AllNoteBookFragment());
 
         if (mCurrentItem != null) {
@@ -182,7 +194,7 @@ public class MainActivity extends BaseActivity {
         return R.layout.activity_main;
     }
 
-    private void setMainFragment(Fragment fragment) {
+    private void setMainFragment(MainFragment fragment) {
         FragmentManager fm = getFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.main_fragment, fragment);
@@ -199,10 +211,14 @@ public class MainActivity extends BaseActivity {
                     setDefaultFragment();
                     break;
             }
-        }else{
+        } else {
             setDefaultFragment();
         }
 
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public FloatingActionButton getFab() {
+        return fabMain;
     }
 }

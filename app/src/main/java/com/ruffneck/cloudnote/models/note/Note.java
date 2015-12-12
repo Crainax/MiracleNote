@@ -12,8 +12,8 @@ public class Note implements Parcelable{
     private long id;
     private Date modify;
     private Date create;
-    private Date alarm;
-    private int notebook = 1;
+    private Date alarm = new Date(0);
+    private long notebook = 1;
 
 
     public Note(){
@@ -40,7 +40,7 @@ public class Note implements Parcelable{
         title = in.readString();
         content = in.readString();
         id= in.readLong();
-        notebook = in.readInt();
+        notebook = in.readLong();
         create = new Date(in.readLong());
         modify = new Date(in.readLong());
         alarm = new Date(in.readLong());
@@ -105,11 +105,11 @@ public class Note implements Parcelable{
         this.alarm = alarm;
     }
 
-    public int getNotebook() {
+    public long getNotebook() {
         return notebook;
     }
 
-    public void setNotebook(int notebook) {
+    public void setNotebook(long notebook) {
         this.notebook = notebook;
     }
 
@@ -123,7 +123,7 @@ public class Note implements Parcelable{
         dest.writeString(title);
         dest.writeString(content);
         dest.writeLong(id);
-        dest.writeInt(notebook);
+        dest.writeLong(notebook);
         dest.writeLong(create.getTime());
         dest.writeLong(modify.getTime());
         dest.writeLong(alarm.getTime());

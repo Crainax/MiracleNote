@@ -6,6 +6,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.ruffneck.cloudnote.models.note.attach.Attach;
+import com.ruffneck.cloudnote.models.note.attach.AttachFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class AttachDAO {
     // Database fields
@@ -61,13 +65,14 @@ public class AttachDAO {
         }
 
         close();
-        System.out.println("AttachDAO.exist================false");
+//        System.out.println("AttachDAO.exist================false");
         return false;
     }
 
 
     /**
      * First judge that if database have the data , insert it if none ,else update.
+     *
      * @param attach
      * @return
      */
@@ -79,5 +84,33 @@ public class AttachDAO {
         }
 
         return id;
+    }
+
+    public List<Attach> queryByNoteId(long id) {
+
+        open();
+
+        List<Attach> attachList = new ArrayList<>();
+        Cursor cursor = database.query(DBConstants.Attach.TABLE_NAME, null,
+                DBConstants.Attach.COLUMN_NOTE + "=?",
+                new String[]{id + ""}, null, null, null);
+
+        if (cursor != null) {
+            Attach attach;
+            while (cursor.moveToNext()) {
+                attach = AttachFactory.getInstance().create(cursor.getInt(cursor.getColumnIndex(DBConstants.Attach.COLUMN_TYPE_ID)));
+                attach.setId(cursor.getLong(cursor.getColumnIndex(DBConstants.Attach.COLUMN_ID)));
+                attach.setNoteId(cursor.getLong(cursor.getColumnIndex(DBConstants.Attach.COLUMN_NOTE)));
+                attach.setLocalURL(cursor.getString(cursor.getColumnIndex(DBConstants.Attach.COLUMN_LOCAL_URL)));
+                attachList.add(attach);
+            }
+
+            cursor.close();
+        }
+
+        close();
+
+        return attachList;
+
     }
 }

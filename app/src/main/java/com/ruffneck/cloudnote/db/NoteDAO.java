@@ -129,7 +129,7 @@ public class NoteDAO {
                 note.setCreate(new Date(cursor.getLong(cursor.getColumnIndex(DBConstants.Note.COLUMN_DATE_CREATE))));
                 note.setModify(new Date(cursor.getLong(cursor.getColumnIndex(DBConstants.Note.COLUMN_DATE_MODIFY))));
                 note.setAlarm(new Date(cursor.getLong(cursor.getColumnIndex(DBConstants.Note.COLUMN_DATE_ALARM))));
-                note.setNotebook(cursor.getInt(cursor.getColumnIndex(DBConstants.Note.COLUMN_NOTEBOOK)));
+                note.setNotebook(cursor.getLong(cursor.getColumnIndex(DBConstants.Note.COLUMN_NOTEBOOK)));
                 noteList.add(note);
             }
 

@@ -33,4 +33,16 @@ public abstract class Attach{
     public int getType() {
         return type;
     }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public void setLocalURL(String localURL) {
+        this.localURL = localURL;
+    }
+
+    public void setNoteId(long noteId) {
+        this.noteId = noteId;
+    }
 }

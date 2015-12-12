@@ -29,7 +29,6 @@ import com.ruffneck.cloudnote.utils.AlertDialogUtils;
 import com.ruffneck.cloudnote.utils.FormatUtils;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -61,8 +60,8 @@ public class NewActivity extends BaseActivity {
 
     private Note note = null;
 
-    private List<Attach> attachList = new ArrayList<>();
-    private AttachAdapter attachAdapter = new AttachAdapter(attachList);
+    private List<Attach> attachList;
+    private AttachAdapter attachAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +85,10 @@ public class NewActivity extends BaseActivity {
             System.out.println("NewActivity.initNoteInfo");
             tvNoteCreate.setVisibility(View.GONE);
             tvNoteModify.setVisibility(View.GONE);
+
+            //set the what the note belong to.
+
+            note.setNotebook(intent.getLongExtra(DBConstants.Note.COLUMN_NOTEBOOK, 1));
         } else {
             tilTitle.getEditText().setText(note.getTitle());
             tilContent.getEditText().setText(note.getContent());
@@ -95,6 +98,9 @@ public class NewActivity extends BaseActivity {
             tvNoteModify.setText("修改于:" + FormatUtils.formatDate(note.getModify()));
 
         }
+
+        attachList = attachDAO.queryByNoteId(note.getId());
+
     }
 
     /**
@@ -161,6 +167,8 @@ public class NewActivity extends BaseActivity {
      * Initialize the attack recyclerView in the card.
      */
     private void initRecyclerViewAdapter() {
+        attachAdapter = new AttachAdapter(attachList);
+
         rvAttach.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         rvAttach.setAdapter(attachAdapter);
         attachAdapter.setOnMoreClickListener(new AttachAdapter.OnMoreClickListener() {
@@ -168,8 +176,8 @@ public class NewActivity extends BaseActivity {
             public void onMoreClick(View view) {
 
                 //show the popup menu.
-                int gravity = Gravity.CENTER;
-                PopupMenu popupMenu = new PopupMenu(NewActivity.this, view, gravity);
+//                int gravity = Gravity.CENTER;
+                PopupMenu popupMenu = new PopupMenu(NewActivity.this, view, Gravity.CENTER);
 
                 getMenuInflater().inflate(R.menu.menu_attach_list, popupMenu.getMenu());
 
@@ -235,7 +243,7 @@ public class NewActivity extends BaseActivity {
     private void insertAttach(Attach attach) {
         attachList.add(attach);
         attachAdapter.notifyItemInsertedEnd();
-        attachDAO.insertUpdate(attach);
+        attachDAO.insert(attach);
     }
 
 }
