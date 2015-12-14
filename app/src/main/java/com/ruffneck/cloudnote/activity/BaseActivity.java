@@ -1,5 +1,6 @@
 package com.ruffneck.cloudnote.activity;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -35,10 +36,12 @@ public abstract class BaseActivity extends AppCompatActivity{
 
     protected void initToolbar(){
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitleTextColor(Color.WHITE);
         setSupportActionBar(toolbar);
         actionBar = getSupportActionBar();
         assert actionBar != null;
         actionBar.setDisplayHomeAsUpEnabled(true);
+//        toolbar.setCollapsible(false);
     }
 
     public ActionBar getNewActionBar(){
@@ -50,4 +53,6 @@ public abstract class BaseActivity extends AppCompatActivity{
     }
 
     protected abstract int setContentResId();
+
+
 }

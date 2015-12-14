@@ -15,6 +15,7 @@ import com.ruffneck.cloudnote.R;
 import com.ruffneck.cloudnote.dialog.ColorPicker;
 import com.ruffneck.cloudnote.models.note.NoteBook;
 import com.ruffneck.cloudnote.utils.AlertDialogUtils;
+import com.ruffneck.cloudnote.utils.ColorsUtils;
 import com.ruffneck.cloudnote.utils.SnackBarUtils;
 
 import butterknife.ButterKnife;
@@ -39,7 +40,10 @@ public class NewBookActivity extends BaseActivity {
             @Override
             public void onConfirm(int color) {
                 NewBookActivity.this.color = color;
+                int reverseColor = ColorsUtils.getReverseColor(color);
                 tvChooseColor.setBackground(new ColorDrawable(color));
+                tvChooseColor.setTextColor(reverseColor);
+
             }
         });
         colorPicker.show();

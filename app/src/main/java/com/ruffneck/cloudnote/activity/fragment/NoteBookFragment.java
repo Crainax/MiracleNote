@@ -3,14 +3,15 @@ package com.ruffneck.cloudnote.activity.fragment;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -26,12 +27,12 @@ import com.ruffneck.cloudnote.db.NoteDAO;
 import com.ruffneck.cloudnote.models.note.Note;
 import com.ruffneck.cloudnote.models.note.NoteBook;
 import com.ruffneck.cloudnote.utils.AlertDialogUtils;
+import com.ruffneck.cloudnote.utils.ColorsUtils;
 
 import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import butterknife.OnClick;
 
 public class NoteBookFragment extends MainFragment {
 
@@ -43,27 +44,10 @@ public class NoteBookFragment extends MainFragment {
     private List<Note> noteList;
     private NoteAdapter noteAdapter;
 
-    @InjectView(R.id.tv_notebook_name)
-    TextView tvNotebookName;
     @InjectView(R.id.tv_notebook_detail)
     TextView tvNotebookDetail;
-    @InjectView(R.id.notebook_color)
-    View notebookColor;
     @InjectView(R.id.rv_note)
     RecyclerView rvNote;
-
-    @OnClick(R.id.bt_delete_notebook)
-    void deleteNoteBook(View view) {
-        AlertDialogUtils.show(getActivity(), "注意", "确认要删除<" + noteBook.getName() + ">吗?(此过程不可逆!)", "确认", "取消", new AlertDialogUtils.OkCallBack() {
-            @Override
-            public void onOkClick(DialogInterface dialog, int which) {
-                NoteBookDAO.getInstance(getActivity()).delete(noteBook);
-                MainActivity mainActivity = (MainActivity) getActivity();
-                mainActivity.refreshNotebookSubMenu();
-                mainActivity.setDefaultFragment();
-            }
-        }, null);
-    }
 
     private NoteBook noteBook;
 
@@ -82,11 +66,7 @@ public class NoteBookFragment extends MainFragment {
         View contentView = inflater.inflate(R.layout.fragment_notebook, null);
         ButterKnife.inject(this, contentView);
 
-        tvNotebookName.setText(noteBook.getName());
         tvNotebookDetail.setText(noteBook.getDetail());
-        if (noteBook.getColor() != 0) {
-            notebookColor.setBackground(new ColorDrawable((int) noteBook.getColor()));
-        }
 
         initAdapter();
 
@@ -97,7 +77,7 @@ public class NoteBookFragment extends MainFragment {
     @Override
     public void onFabClick(FloatingActionButton fab) {
         Intent intent = new Intent(getActivity(), NewActivity.class);
-        intent.putExtra(DBConstants.Note.COLUMN_NOTEBOOK,noteBook.getId());
+        intent.putExtra(DBConstants.Note.COLUMN_NOTEBOOK, noteBook.getId());
         startActivityForResult(intent, REQUEST_ADD_NOTE);
     }
 
@@ -125,9 +105,29 @@ public class NoteBookFragment extends MainFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         Bundle bundle = getArguments();
         noteBook = bundle.getParcelable("notebook");
+        super.onCreate(savedInstanceState);
+    }
+
+
+    @Override
+    public void initToolbar(Toolbar toolbar) {
+
+        if (noteBook != null) {
+
+            int color = (int) noteBook.getColor();
+            int reverseColor = ColorsUtils.getReverseColor(color);
+
+            toolbar.setBackgroundColor(color);
+            toolbar.setTitle(noteBook.getName());
+            toolbar.setTitleTextColor(reverseColor);
+            getMainActivity().getWindow().setStatusBarColor(color);
+
+//            toolbar.setSubtitleTextColor(reverseColor);
+//            toolbar.setSubtitle(noteBook.getDetail());
+
+        }
     }
 
     @Override
@@ -145,7 +145,7 @@ public class NoteBookFragment extends MainFragment {
                 case REQUEST_EDIT_NOTE:
                     note = data.getParcelableExtra("note");
                     int index = noteList.indexOf(note);
-                    noteList.set(index,note);
+                    noteList.set(index, note);
                     noteAdapter.notifyItemChanged(index);
                     break;
                 case REQUEST_ADD_NOTE:
@@ -156,5 +156,35 @@ public class NoteBookFragment extends MainFragment {
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+
+    @Override
+    public int optionsMenu() {
+        return R.menu.menu_notebook;
+    }
+
+    @Override
+    public int optionsMenuItemColor() {
+        return ColorsUtils.getReverseColor((int) noteBook.getColor());
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_delete:
+                AlertDialogUtils.show(getActivity(), "注意", "确认要删除<" + noteBook.getName() + ">吗?(此过程不可逆!)", "确认", "取消", new AlertDialogUtils.OkCallBack() {
+                    @Override
+                    public void onOkClick(DialogInterface dialog, int which) {
+                        NoteBookDAO.getInstance(getActivity()).delete(noteBook);
+                        MainActivity mainActivity = (MainActivity) getActivity();
+                        mainActivity.refreshNotebookSubMenu();
+                        mainActivity.setDefaultFragment();
+                    }
+                }, null);
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

@@ -3,6 +3,7 @@ package com.ruffneck.cloudnote.activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -27,7 +28,7 @@ import butterknife.InjectView;
 
 public class MainActivity extends BaseActivity {
 
-    private static final int REQUEST_CODE_NEW_BOOK = 0x123;
+    public static final int REQUEST_CODE_NEW_BOOK = 0x123;
 
     @InjectView(R.id.nv)
     NavigationView nv;
@@ -35,6 +36,8 @@ public class MainActivity extends BaseActivity {
     DrawerLayout drawer;
     @InjectView(R.id.fab_main)
     FloatingActionButton fabMain;
+
+    MainFragment mCurrentFragment;
 
 //    public interface InitToolbar{
 //        void initToolbar(Toolbar toolbar);
@@ -109,6 +112,24 @@ public class MainActivity extends BaseActivity {
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+
+        if (mCurrentFragment != null && mCurrentFragment.optionsMenu() != 0) {
+            getMenuInflater().inflate(mCurrentFragment.optionsMenu(), menu);
+
+            for (int i = 0; i < menu.size(); i++) {
+                MenuItem item = menu.getItem(i);
+                Drawable icon = item.getIcon();
+                icon.setTint(mCurrentFragment.optionsMenuItemColor());
+                item.setIcon(icon);
+            }
+        } else
+            getMenuInflater().inflate(R.menu.menu_null, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
 
     /**
      * Initialize the submenu of all the notebooks.
@@ -150,6 +171,7 @@ public class MainActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
+
         switch (item.getItemId()) {
             case R.id.menu_add_new_notebook:
                 startActivityForResult(new Intent(this, NewBookActivity.class), REQUEST_CODE_NEW_BOOK);
@@ -161,11 +183,29 @@ public class MainActivity extends BaseActivity {
             default:
                 int notebookId = item.getItemId();
 //                setMainFragment(new NoteBookFragment(noteBookDAO.queryById(notebookId)));
-                setMainFragment(NoteBookFragment.newInstance(noteBookDAO.queryById(notebookId)));
+                if (noteBookDAO.exist(notebookId))
+                    startNoteBookFragment(notebookId);
                 break;
         }
 
+        if (mCurrentFragment != null)
+            mCurrentFragment.onOptionsItemSelected(item);
+
         return super.onOptionsItemSelected(item);
+    }
+
+    public void startNoteBookFragment(int notebookId) {
+
+        setMainFragment(NoteBookFragment.newInstance(noteBookDAO.queryById(notebookId)));
+
+        if (mCurrentItem != null) {
+            mCurrentItem.setChecked(false);
+        }
+
+        mCurrentItem = nv.getMenu().findItem(notebookId);
+
+        mCurrentItem.setChecked(true);
+
     }
 
 
@@ -195,6 +235,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void setMainFragment(MainFragment fragment) {
+        mCurrentFragment = fragment;
         FragmentManager fm = getFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.main_fragment, fragment);
