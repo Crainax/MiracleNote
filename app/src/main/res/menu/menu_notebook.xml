@@ -9,4 +9,11 @@
         android:title="删除"
         app:showAsAction="always" />
 
+    <item
+        android:id="@+id/action_edit"
+        android:icon="@drawable/ic_edit_24dp"
+        android:orderInCategory="100"
+        android:title="修改"
+        app:showAsAction="always" />
+
 </menu>

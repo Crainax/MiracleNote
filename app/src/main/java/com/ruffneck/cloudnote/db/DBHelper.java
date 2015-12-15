@@ -47,21 +47,21 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
         //Insert the default data
-        db.execSQL("insert into " + DBConstants.NoteBook.TABLE_NAME + " values(?,?,?,?)",new Object[]{
+        db.execSQL("insert into " + DBConstants.NoteBook.TABLE_NAME + " values(?,?,?,?)", new Object[]{
                 DBConstants.NoteBook.ID_DEFAULT_NOTEBOOK,
                 DBConstants.NoteBook.DEFAULT_NOTEBOOK_NAME,
                 DBConstants.NoteBook.DEFAULT_NOTEBOOK_DETAIL,
                 DBConstants.NoteBook.DEFAULT_NOTEBOOK_COLOR
         });
 
-        db.execSQL("insert into " + DBConstants.NoteBook.TABLE_NAME + " values(?,?,?,?)",new Object[]{
+        db.execSQL("insert into " + DBConstants.NoteBook.TABLE_NAME + " values(?,?,?,?)", new Object[]{
                 DBConstants.NoteBook.ID_RECYCLE_BIN,
                 DBConstants.NoteBook.RECYCLE_BIN_NAME,
                 DBConstants.NoteBook.RECYCLE_BIN_DETAIL,
                 DBConstants.NoteBook.RECYCLE_BIN_COLOR
         });
 
-        db.execSQL("insert into " + DBConstants.Type.TABLE_NAME + " values(?,?)",new Object[]{
+        db.execSQL("insert into " + DBConstants.Type.TABLE_NAME + " values(?,?)", new Object[]{
                 DBConstants.Type.TYPE_IMAGE,
                 DBConstants.Type.NAME_IMAGE,
         });
@@ -80,6 +80,18 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        switch (oldVersion) {
+            case 1:
+                db.execSQL("ALTER TABLE " + DBConstants.Note.TABLE_NAME + " ADD COLUMN " +
+                        DBConstants.Note.COLUMN_PRENOTEBOOK + " long");
+                db.execSQL("ALTER TABLE " + DBConstants.Note.TABLE_NAME + " ADD COLUMN " +
+                        DBConstants.Note.COLUMN_SYNC + " integer");
+                System.out.println("database version update from 1");
+            case 2:
+                db.execSQL("ALTER TABLE " + DBConstants.NoteBook.TABLE_NAME + " ADD COLUMN " +
+                        DBConstants.NoteBook.COLUMN_SYNC + " integer");
+                System.out.println("database version update from 2");
+                break;
+        }
     }
 }

@@ -18,6 +18,7 @@ public class NoteBookDAO {
     private DBHelper dbHelper;
 
     public static NoteBookDAO noteBookDAO;
+    private Context mContext;
 
     public synchronized static NoteBookDAO getInstance(Context context) {
         if (noteBookDAO == null)
@@ -26,7 +27,8 @@ public class NoteBookDAO {
     }
 
     private NoteBookDAO(Context context) {
-        dbHelper = new DBHelper(context.getApplicationContext());
+        mContext = context.getApplicationContext();
+        dbHelper = new DBHelper(mContext);
     }
 
     public void open() {
@@ -45,6 +47,7 @@ public class NoteBookDAO {
         values.put(DBConstants.NoteBook.COLUMN_NAME, noteBook.getName());
         values.put(DBConstants.NoteBook.COLUMN_COLOR, noteBook.getColor());
         values.put(DBConstants.NoteBook.COLUMN_DETAIL, noteBook.getDetail());
+        values.put(DBConstants.NoteBook.COLUMN_SYNC, noteBook.isHasSync() ? 1 : 0);
 
         long id = database.insert(DBConstants.NoteBook.TABLE_NAME, null, values);
         noteBook.setId(id);
@@ -53,6 +56,20 @@ public class NoteBookDAO {
         close();
 
         return id;
+    }
+
+    public void update(NoteBook noteBook) {
+        open();
+        ContentValues values = new ContentValues();
+
+        values.put(DBConstants.NoteBook.COLUMN_NAME, noteBook.getName());
+        values.put(DBConstants.NoteBook.COLUMN_COLOR, noteBook.getColor());
+        values.put(DBConstants.NoteBook.COLUMN_DETAIL, noteBook.getDetail());
+        values.put(DBConstants.NoteBook.COLUMN_SYNC, noteBook.isHasSync() ? 1 : 0);
+
+        database.update(DBConstants.NoteBook.TABLE_NAME, values, DBConstants.NoteBook.COLUMN_ID + "=?", new String[]{noteBook.getId() + ""});
+
+        close();
     }
 
     public boolean exist(long id) {
@@ -74,14 +91,15 @@ public class NoteBookDAO {
     /**
      * First judge that if database have the data , insert it if none ,else update.
      *
-     * @param note
+     * @param notebook
      * @return
      */
-    public long insertUpdate(NoteBook note) {
+    public long insertUpdate(NoteBook notebook) {
         long id = -1;
-        if (!exist(note.getId())) {
-            id = insert(note);
+        if (!exist(notebook.getId())) {
+            id = insert(notebook);
         } else {
+            update(notebook);
         }
 
         return id;
@@ -102,6 +120,7 @@ public class NoteBookDAO {
                 noteBook.setColor(cursor.getLong(cursor.getColumnIndex(DBConstants.NoteBook.COLUMN_COLOR)));
                 noteBook.setDetail(cursor.getString(cursor.getColumnIndex(DBConstants.NoteBook.COLUMN_DETAIL)));
                 noteBook.setName(cursor.getString(cursor.getColumnIndex(DBConstants.NoteBook.COLUMN_NAME)));
+                noteBook.setHasSync(cursor.getInt(cursor.getColumnIndex(DBConstants.NoteBook.COLUMN_SYNC)) == 1);
                 noteBookList.add(noteBook);
             }
 
@@ -129,6 +148,7 @@ public class NoteBookDAO {
                 noteBook.setColor(cursor.getLong(cursor.getColumnIndex(DBConstants.NoteBook.COLUMN_COLOR)));
                 noteBook.setDetail(cursor.getString(cursor.getColumnIndex(DBConstants.NoteBook.COLUMN_DETAIL)));
                 noteBook.setName(cursor.getString(cursor.getColumnIndex(DBConstants.NoteBook.COLUMN_NAME)));
+                noteBook.setHasSync(cursor.getInt(cursor.getColumnIndex(DBConstants.NoteBook.COLUMN_SYNC)) == 1);
             }
 
             cursor.close();
@@ -140,7 +160,7 @@ public class NoteBookDAO {
         return noteBook;
     }
 
-    public NoteBook delete(NoteBook noteBook){
+    public NoteBook delete(NoteBook noteBook) {
         open();
 
         database.delete(DBConstants.NoteBook.TABLE_NAME, DBConstants.NoteBook.COLUMN_ID + "=?", new String[]{noteBook.getId() + ""});

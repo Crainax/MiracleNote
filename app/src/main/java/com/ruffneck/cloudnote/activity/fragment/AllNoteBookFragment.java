@@ -7,12 +7,13 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.ruffneck.cloudnote.R;
-import com.ruffneck.cloudnote.activity.NewBookActivity;
+import com.ruffneck.cloudnote.activity.EditNoteBookActivity;
 import com.ruffneck.cloudnote.activity.adapter.AllNoteBookAdapter;
 import com.ruffneck.cloudnote.db.NoteBookDAO;
 import com.ruffneck.cloudnote.models.note.NoteBook;
@@ -46,7 +47,7 @@ public class AllNoteBookFragment extends MainFragment {
 
     @Override
     public void onFabClick(FloatingActionButton fab) {
-        getMainActivity().startActivityForResult(new Intent(getMainActivity(), NewBookActivity.class), getMainActivity().REQUEST_CODE_NEW_BOOK);
+        getMainActivity().startActivityForResult(new Intent(getMainActivity(), EditNoteBookActivity.class), getMainActivity().REQUEST_CODE_NEW_BOOK);
     }
 
     private void initAdapter() {
@@ -74,5 +75,11 @@ public class AllNoteBookFragment extends MainFragment {
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.reset(this);
+    }
+
+    @Override
+    public void initToolbar(Toolbar toolbar) {
+        super.initToolbar(toolbar);
+        toolbar.setTitle("所有笔记本");
     }
 }

@@ -8,7 +8,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ruffneck.cloudnote.R;
+import com.ruffneck.cloudnote.db.AttachDAO;
 import com.ruffneck.cloudnote.models.note.Note;
+import com.ruffneck.cloudnote.models.note.attach.Attach;
 import com.ruffneck.cloudnote.utils.FormatUtils;
 
 import java.util.List;
@@ -55,8 +57,16 @@ public class NoteAdapter extends ImageLoaderAdapter<NoteAdapter.ViewHolder> {
 
         holder.tvTitle.setText(note.getTitle());
         holder.tvContent.setText(note.getContent());
-        holder.tvUpdate.setText("最后更新:"+FormatUtils.formatDate(note.getModify()));
+        holder.tvUpdate.setText("最后更新:" + FormatUtils.formatDate(note.getModify()));
 
+        Attach attach = AttachDAO.getInstance(holder.itemView.getContext()).queryFirstByNoteId(note.getId());
+        if (attach != null) {
+            holder.iv.setVisibility(View.VISIBLE);
+            loader.displayImage("file://" + attach.localURL, holder.iv, options);
+        } else {
+            holder.iv.setImageBitmap(null);
+            holder.iv.setVisibility(View.INVISIBLE);
+        }
         bindClickListener(holder.itemView, position);
     }
 

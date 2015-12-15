@@ -8,10 +8,11 @@ import android.os.Parcelable;
  */
 public class NoteBook implements Parcelable{
 
-    private long id = 1;
+    private long id = -1;
     private String name;
     private long color = 0x0000ff;
     private String detail;
+    private boolean hasSync;
 
     public long getId() {
         return id;
@@ -45,6 +46,14 @@ public class NoteBook implements Parcelable{
         this.detail = detail;
     }
 
+    public boolean isHasSync() {
+        return hasSync;
+    }
+
+    public void setHasSync(boolean hasSync) {
+        this.hasSync = hasSync;
+    }
+
     public NoteBook() {
     }
 
@@ -65,6 +74,7 @@ public class NoteBook implements Parcelable{
         name = in.readString();
         detail = in.readString();
         color = in.readLong();
+        hasSync = in.readInt() == 1;
     }
     
     @Override
@@ -78,5 +88,6 @@ public class NoteBook implements Parcelable{
         dest.writeString(name);
         dest.writeString(detail);
         dest.writeLong(color);
+        dest.writeInt(hasSync ? 1 : 0);
     }
 }

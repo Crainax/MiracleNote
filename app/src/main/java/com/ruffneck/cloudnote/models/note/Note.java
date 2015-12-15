@@ -5,7 +5,7 @@ import android.os.Parcelable;
 
 import java.util.Date;
 
-public class Note implements Parcelable{
+public class Note implements Parcelable {
 
     private String title;
     private String content;
@@ -14,9 +14,10 @@ public class Note implements Parcelable{
     private Date create;
     private Date alarm = new Date(0);
     private long notebook = 1;
+    private boolean hasSync = false;
+    private long preNotebook = 1;
 
-
-    public Note(){
+    public Note() {
 
     }
 
@@ -39,11 +40,13 @@ public class Note implements Parcelable{
     protected Note(Parcel in) {
         title = in.readString();
         content = in.readString();
-        id= in.readLong();
+        id = in.readLong();
         notebook = in.readLong();
         create = new Date(in.readLong());
         modify = new Date(in.readLong());
         alarm = new Date(in.readLong());
+        hasSync = in.readInt() == 1;
+        preNotebook = in.readLong();
     }
 
     public static final Creator<Note> CREATOR = new Creator<Note>() {
@@ -57,6 +60,7 @@ public class Note implements Parcelable{
             return new Note[size];
         }
     };
+
     public String getTitle() {
         return title;
     }
@@ -113,6 +117,22 @@ public class Note implements Parcelable{
         this.notebook = notebook;
     }
 
+    public boolean isHasSync() {
+        return hasSync;
+    }
+
+    public void setHasSync(boolean hasSync) {
+        this.hasSync = hasSync;
+    }
+
+    public long getPreNotebook() {
+        return preNotebook;
+    }
+
+    public void setPreNotebook(long preNotebook) {
+        this.preNotebook = preNotebook;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -127,5 +147,7 @@ public class Note implements Parcelable{
         dest.writeLong(create.getTime());
         dest.writeLong(modify.getTime());
         dest.writeLong(alarm.getTime());
+        dest.writeInt(hasSync ? 1 : 0);
+        dest.writeLong(preNotebook);
     }
 }

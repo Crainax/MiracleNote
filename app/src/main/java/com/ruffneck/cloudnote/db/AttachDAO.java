@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.annotation.Nullable;
 
 import com.ruffneck.cloudnote.models.note.attach.Attach;
 import com.ruffneck.cloudnote.models.note.attach.AttachFactory;
@@ -17,6 +18,7 @@ public class AttachDAO {
     private DBHelper dbHelper;
 
     public static AttachDAO attachDAO;
+    private Context mContext;
 
     public synchronized static AttachDAO getInstance(Context context) {
         if (attachDAO == null)
@@ -26,7 +28,8 @@ public class AttachDAO {
     }
 
     private AttachDAO(Context context) {
-        dbHelper = new DBHelper(context.getApplicationContext());
+        mContext = context.getApplicationContext();
+        dbHelper = new DBHelper(mContext);
     }
 
     public void open() {
@@ -86,6 +89,16 @@ public class AttachDAO {
         return id;
     }
 
+    public void delete(Attach attach) {
+
+        open();
+
+        database.delete(DBConstants.Attach.TABLE_NAME, DBConstants.Attach.COLUMN_ID + "=?",
+                new String[]{attach.getId() + ""});
+
+        close();
+    }
+
     public List<Attach> queryByNoteId(long id) {
 
         open();
@@ -113,4 +126,51 @@ public class AttachDAO {
         return attachList;
 
     }
+
+    @Nullable
+    public Attach queryFirstByNoteId(long id) {
+        open();
+
+        Cursor cursor = database.query(DBConstants.Attach.TABLE_NAME, null,
+                DBConstants.Attach.COLUMN_NOTE + "=?",
+                new String[]{id + ""}, null, null, null);
+
+        if (cursor != null) {
+            Attach attach;
+            if (cursor.moveToNext()) {
+                attach = AttachFactory.getInstance().create(cursor.getInt(cursor.getColumnIndex(DBConstants.Attach.COLUMN_TYPE_ID)));
+                attach.setId(cursor.getLong(cursor.getColumnIndex(DBConstants.Attach.COLUMN_ID)));
+                attach.setNoteId(cursor.getLong(cursor.getColumnIndex(DBConstants.Attach.COLUMN_NOTE)));
+                attach.setLocalURL(cursor.getString(cursor.getColumnIndex(DBConstants.Attach.COLUMN_LOCAL_URL)));
+                return attach;
+            }
+
+            cursor.close();
+        }
+
+        close();
+
+        return null;
+    }
+
+    public int queryCountByNoteId(long id) {
+
+        open();
+
+        Cursor cursor = database.query(DBConstants.Attach.TABLE_NAME, new String[]{DBConstants.Attach.COLUMN_ID},
+                DBConstants.Attach.COLUMN_NOTE + "=?",
+                new String[]{id + ""}, null, null, null);
+
+        if (cursor != null) {
+
+            int count = cursor.getCount();
+            cursor.close();
+            return count;
+        }
+
+        close();
+
+        return 0;
+    }
+
 }

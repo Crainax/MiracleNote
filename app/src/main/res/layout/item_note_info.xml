@@ -13,7 +13,8 @@
         android:id="@+id/iv_note_info"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:padding="8dp"
+        android:layout_margin="8dp"
+        android:scaleType="centerCrop"
         android:layout_alignParentRight="true"
         android:src="@android:drawable/ic_menu_camera"
         />

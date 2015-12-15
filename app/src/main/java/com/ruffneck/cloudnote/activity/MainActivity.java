@@ -18,6 +18,7 @@ import com.ruffneck.cloudnote.R;
 import com.ruffneck.cloudnote.activity.fragment.AllNoteBookFragment;
 import com.ruffneck.cloudnote.activity.fragment.MainFragment;
 import com.ruffneck.cloudnote.activity.fragment.NoteBookFragment;
+import com.ruffneck.cloudnote.activity.fragment.RecycleFragment;
 import com.ruffneck.cloudnote.db.DBConstants;
 import com.ruffneck.cloudnote.models.note.NoteBook;
 
@@ -29,6 +30,7 @@ import butterknife.InjectView;
 public class MainActivity extends BaseActivity {
 
     public static final int REQUEST_CODE_NEW_BOOK = 0x123;
+    public static final int REQUEST_CODE_EDIT_BOOK = 0x122;
 
     @InjectView(R.id.nv)
     NavigationView nv;
@@ -174,17 +176,28 @@ public class MainActivity extends BaseActivity {
 
         switch (item.getItemId()) {
             case R.id.menu_add_new_notebook:
-                startActivityForResult(new Intent(this, NewBookActivity.class), REQUEST_CODE_NEW_BOOK);
+                startActivityForResult(new Intent(this, EditNoteBookActivity.class), REQUEST_CODE_NEW_BOOK);
                 break;
             //The notebook which is clicked.
             case R.id.action_all_note_book:
                 setDefaultFragment();
                 break;
+            case R.id.action_setting:
+
+                break;
+            case R.id.action_user_info:
+
+                break;
+            case R.id.action_exit:
+                Intent intent = new Intent(this, LoginActivity.class);
+                startActivity(intent);
+                break;
             default:
                 int notebookId = item.getItemId();
 //                setMainFragment(new NoteBookFragment(noteBookDAO.queryById(notebookId)));
-                if (noteBookDAO.exist(notebookId))
+                if (noteBookDAO.exist(notebookId)) {
                     startNoteBookFragment(notebookId);
+                }
                 break;
         }
 
@@ -194,15 +207,18 @@ public class MainActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void startNoteBookFragment(int notebookId) {
+    public void startNoteBookFragment(long notebookId) {
 
-        setMainFragment(NoteBookFragment.newInstance(noteBookDAO.queryById(notebookId)));
+        if (notebookId != DBConstants.NoteBook.ID_RECYCLE_BIN)
+            setMainFragment(NoteBookFragment.newInstance(noteBookDAO.queryById(notebookId)));
+        else
+            setMainFragment(RecycleFragment.newInstance(noteBookDAO.queryById(notebookId)));
 
         if (mCurrentItem != null) {
             mCurrentItem.setChecked(false);
         }
 
-        mCurrentItem = nv.getMenu().findItem(notebookId);
+        mCurrentItem = nv.getMenu().findItem((int) notebookId);
 
         mCurrentItem.setChecked(true);
 
@@ -212,6 +228,7 @@ public class MainActivity extends BaseActivity {
     /**
      * set the drawer to the default selected state and the adapter.
      */
+
     public void setDefaultFragment() {
         setMainFragment(new AllNoteBookFragment());
 
@@ -250,6 +267,12 @@ public class MainActivity extends BaseActivity {
                 case REQUEST_CODE_NEW_BOOK:
                     refreshNotebookSubMenu();
                     setDefaultFragment();
+                    System.out.println("hahahahahahahahasadhkdjkfsdahjklsdhdsjlksdhfsadfsdhkldsf");
+                    break;
+                case REQUEST_CODE_EDIT_BOOK:
+                    NoteBook noteBook = data.getParcelableExtra("notebook");
+                    refreshNotebookSubMenu();
+                    startNoteBookFragment(noteBook.getId());
                     break;
             }
         } else {

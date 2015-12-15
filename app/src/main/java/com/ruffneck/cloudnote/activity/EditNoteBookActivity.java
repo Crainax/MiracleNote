@@ -1,6 +1,7 @@
 package com.ruffneck.cloudnote.activity;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -22,7 +23,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 
-public class NewBookActivity extends BaseActivity {
+public class EditNoteBookActivity extends BaseActivity {
 
     @InjectView(R.id.til_new_name)
     TextInputLayout tilNewName;
@@ -33,17 +34,14 @@ public class NewBookActivity extends BaseActivity {
 
     //The notebook's color.
     private int color = Color.BLUE;
+    private NoteBook noteBook;
 
     @OnClick(R.id.tv_choose_color)
-    void chooseColor(View view){
+    void chooseColor(View view) {
         ColorPicker colorPicker = new ColorPicker(this, color, new ColorPicker.OnConfirmListener() {
             @Override
             public void onConfirm(int color) {
-                NewBookActivity.this.color = color;
-                int reverseColor = ColorsUtils.getReverseColor(color);
-                tvChooseColor.setBackground(new ColorDrawable(color));
-                tvChooseColor.setTextColor(reverseColor);
-
+                setColor(color);
             }
         });
         colorPicker.show();
@@ -54,7 +52,30 @@ public class NewBookActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
 
+        initNoteBook();
+
         tvChooseColor.setBackground(new ColorDrawable(color));
+    }
+
+    private void initNoteBook() {
+        noteBook = getIntent().getParcelableExtra("notebook");
+
+        if (noteBook == null) {
+            noteBook = new NoteBook();
+        } else {
+            tilNewName.getEditText().setText(noteBook.getName());
+            tilNewDetail.getEditText().setText(noteBook.getDetail());
+            setColor((int) noteBook.getColor());
+            getToolbar().setTitle("编辑笔记本");
+        }
+
+    }
+
+    private void setColor(int color) {
+        EditNoteBookActivity.this.color = color;
+        int reverseColor = ColorsUtils.getReverseColor(color);
+        tvChooseColor.setBackground(new ColorDrawable(color));
+        tvChooseColor.setTextColor(reverseColor);
     }
 
     @Override
@@ -84,7 +105,7 @@ public class NewBookActivity extends BaseActivity {
                 AlertDialogUtils.show(this, "确认", "确认离开么?离开后内容将不保存", "确认", "取消", new AlertDialogUtils.OkCallBack() {
                     @Override
                     public void onOkClick(DialogInterface dialog, int which) {
-                        NewBookActivity.this.finish();
+                        EditNoteBookActivity.this.finish();
                     }
                 }, null);
                 break;
@@ -98,12 +119,13 @@ public class NewBookActivity extends BaseActivity {
             SnackBarUtils.showSnackBar(tilNewDetail, "标题不能为空!", 3000, "OK");
             return;
         }
-        NoteBook noteBook = new NoteBook();
         noteBook.setName(name);
         noteBook.setDetail(tilNewDetail.getEditText().getText().toString());
         noteBook.setColor(color);
-        noteBookDAO.insert(noteBook);
-        setResult(RESULT_OK);
+        noteBookDAO.insertUpdate(noteBook);
+        Intent data = new Intent();
+        data.putExtra("notebook", noteBook);
+        setResult(RESULT_OK, data);
         finish();
     }
 }

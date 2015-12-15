@@ -35,7 +35,7 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-public class NewActivity extends BaseActivity {
+public class EditNoteActivity extends BaseActivity {
 
 
     private static final int REQUEST_IMAGE = 0x000001;
@@ -82,7 +82,6 @@ public class NewActivity extends BaseActivity {
             note = new Note();
             long id = noteDAO.insert(note);
             note.setId(id);
-            System.out.println("NewActivity.initNoteInfo");
             tvNoteCreate.setVisibility(View.GONE);
             tvNoteModify.setVisibility(View.GONE);
 
@@ -122,7 +121,7 @@ public class NewActivity extends BaseActivity {
         Intent intent = null;
         switch (item.getItemId()) {
             case android.R.id.home:
-                AlertDialogUtils.show(NewActivity.this, "确认", "确认离开吗?", "确认", "取消", new AlertDialogUtils.OkCallBack() {
+                AlertDialogUtils.show(EditNoteActivity.this, "确认", "确认离开吗?", "确认", "取消", new AlertDialogUtils.OkCallBack() {
                     @Override
                     public void onOkClick(DialogInterface dialog, int which) {
                         finish();
@@ -177,14 +176,14 @@ public class NewActivity extends BaseActivity {
 
                 //show the popup menu.
 //                int gravity = Gravity.CENTER;
-                PopupMenu popupMenu = new PopupMenu(NewActivity.this, view, Gravity.CENTER);
+                PopupMenu popupMenu = new PopupMenu(EditNoteActivity.this, view, Gravity.CENTER);
 
                 getMenuInflater().inflate(R.menu.menu_attach_list, popupMenu.getMenu());
 
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        NewActivity.this.onOptionsItemSelected(item);
+                        EditNoteActivity.this.onOptionsItemSelected(item);
                         return true;
                     }
                 });
@@ -196,7 +195,24 @@ public class NewActivity extends BaseActivity {
         attachAdapter.setOnItemClickListener(new AttachAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, Attach attach) {
-                Toast.makeText(NewActivity.this, attach.localURL, Toast.LENGTH_SHORT).show();
+                Toast.makeText(EditNoteActivity.this, attach.localURL, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        attachAdapter.setOnItemLongClickListener(new AttachAdapter.OnItemLongClickListener() {
+            @Override
+            public void onItemLongClick(View view, final Attach attach) {
+                AlertDialogUtils.show(EditNoteActivity.this, "注意", "确认要删除该附件吗?", "确认", "取消", new AlertDialogUtils.OkCallBack() {
+                    @Override
+                    public void onOkClick(DialogInterface dialog, int which) {
+
+                        int index = attachList.indexOf(attach);
+                        attachList.remove(index);
+                        attachAdapter.notifyItemRemoved(index);
+                        attachDAO.delete(attach);
+
+                    }
+                }, null);
             }
         });
     }
