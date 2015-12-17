@@ -162,6 +162,39 @@ public class NoteDAO {
 
     }
 
+    public List<Note> queryByAvailableAlarm(long currentMillis) {
+        open();
+
+        List<Note> noteList = new ArrayList<>();
+        Cursor cursor = database.query(DBConstants.Note.TABLE_NAME, null,
+                DBConstants.Note.COLUMN_DATE_ALARM + ">?",
+                new String[]{currentMillis + ""}, null, null, null);
+
+        if (cursor != null) {
+            Note note;
+            while (cursor.moveToNext()) {
+                note = new Note();
+                note.setId(cursor.getLong(cursor.getColumnIndex(DBConstants.Note.COLUMN_ID)));
+                note.setTitle(cursor.getString(cursor.getColumnIndex(DBConstants.Note.COLUMN_TITLE)));
+                note.setContent(cursor.getString(cursor.getColumnIndex(DBConstants.Note.COLUMN_CONTENT)));
+                note.setCreate(new Date(cursor.getLong(cursor.getColumnIndex(DBConstants.Note.COLUMN_DATE_CREATE))));
+                note.setModify(new Date(cursor.getLong(cursor.getColumnIndex(DBConstants.Note.COLUMN_DATE_MODIFY))));
+                note.setAlarm(new Date(cursor.getLong(cursor.getColumnIndex(DBConstants.Note.COLUMN_DATE_ALARM))));
+                note.setNotebook(cursor.getLong(cursor.getColumnIndex(DBConstants.Note.COLUMN_NOTEBOOK)));
+                note.setPreNotebook(cursor.getLong(cursor.getColumnIndex(DBConstants.Note.COLUMN_PRENOTEBOOK)));
+                note.setHasSync(cursor.getInt(cursor.getColumnIndex(DBConstants.Note.COLUMN_SYNC)) == 1);
+                noteList.add(note);
+            }
+
+            cursor.close();
+        }
+
+        close();
+
+        return noteList;
+
+    }
+
     public void moveToRecycleBin(Note note) {
 
         note.setPreNotebook(note.getNotebook());

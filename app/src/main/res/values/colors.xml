@@ -13,5 +13,5 @@
     <color name="wathetText">#0077ff</color>
     <color name="textTitle">#222222</color>
     <color name="textContent">#aaaaaa</color>
-    <color name="update_time">#f70</color>
+    <color name="text_time">#f70</color>
 </resources>

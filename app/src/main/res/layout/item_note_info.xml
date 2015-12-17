@@ -62,7 +62,7 @@
             android:ellipsize="end"
             android:singleLine="true"
             android:text="更新时间:2015-12-10 18:24"
-            android:textColor="@color/update_time"
+            android:textColor="@color/text_time"
             android:textSize="12sp" />
 
         <TextView

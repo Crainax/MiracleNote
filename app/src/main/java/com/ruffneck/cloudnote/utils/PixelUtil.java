@@ -3,7 +3,7 @@ package com.ruffneck.cloudnote.utils;
 import android.content.Context;
 import android.content.res.Resources;
 
-import com.ruffneck.cloudnote.info.CustomApplication;
+import com.ruffneck.cloudnote.CustomApplication;
 
 /**
  * 像素转换工具

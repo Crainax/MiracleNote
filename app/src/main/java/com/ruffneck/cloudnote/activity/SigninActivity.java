@@ -9,6 +9,8 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVOSCloud;
 import com.avos.avoscloud.AVUser;
@@ -70,7 +72,11 @@ public class SigninActivity extends AppCompatActivity {
                         setResult(SigninActivity.RESULT_OK, intent);
                         finish();
                     }else{
-                        Snackbar.make(view, "注册失败!" + e.getMessage(), Snackbar.LENGTH_LONG).show();
+
+                        JSONObject jsonObject = JSON.parseObject(e.getMessage());
+                        String error = jsonObject.getString("error");
+
+                        Snackbar.make(view, "注册失败! " + error, Snackbar.LENGTH_LONG).show();
                         e.printStackTrace();
                     }
                 }

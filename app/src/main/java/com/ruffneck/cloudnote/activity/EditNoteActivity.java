@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.ruffneck.cloudnote.CustomApplication;
 import com.ruffneck.cloudnote.R;
 import com.ruffneck.cloudnote.activity.adapter.AttachAdapter;
 import com.ruffneck.cloudnote.db.DBConstants;
@@ -76,7 +77,9 @@ public class EditNoteActivity extends BaseActivity {
         }
 
 
-        calendar.add(Calendar.HOUR, 1);
+//        calendar.add(Calendar.HOUR, 1);
+        //used to test , add 10 second.
+        calendar.add(Calendar.SECOND, 10);
 
         new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -123,6 +126,7 @@ public class EditNoteActivity extends BaseActivity {
         initNoteInfo();
 
         initRecyclerViewAdapter();
+        updateAlarmView();
     }
 
     private void initNoteInfo() {
@@ -281,6 +285,8 @@ public class EditNoteActivity extends BaseActivity {
             tvAlarm.setText("点击添加提醒");
             ivAlarm.setImageResource(R.drawable.ic_alarm_add_black_18dp);
         }
+
+        CustomApplication.getInstance().updateAlarm(note);
 
     }
 

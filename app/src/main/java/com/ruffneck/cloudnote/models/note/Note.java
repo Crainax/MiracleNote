@@ -1,5 +1,6 @@
 package com.ruffneck.cloudnote.models.note;
 
+import android.app.PendingIntent;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -16,6 +17,7 @@ public class Note implements Parcelable {
     private long notebook = 1;
     private boolean hasSync = false;
     private long preNotebook = 1;
+    private PendingIntent pendingIntent;
 
     public Note() {
 
@@ -47,6 +49,7 @@ public class Note implements Parcelable {
         alarm = new Date(in.readLong());
         hasSync = in.readInt() == 1;
         preNotebook = in.readLong();
+        pendingIntent = in.readParcelable(PendingIntent.class.getClassLoader());
     }
 
     public static final Creator<Note> CREATOR = new Creator<Note>() {
@@ -133,6 +136,30 @@ public class Note implements Parcelable {
         this.preNotebook = preNotebook;
     }
 
+    public PendingIntent getPendingIntent() {
+        return pendingIntent;
+    }
+
+    public void setPendingIntent(PendingIntent pendingIntent) {
+        this.pendingIntent = pendingIntent;
+    }
+
+    @Override
+    public String toString() {
+        return "Note{" +
+                "title='" + title + '\'' +
+                ", content='" + content + '\'' +
+                ", id=" + id +
+                ", modify=" + modify +
+                ", create=" + create +
+                ", alarm=" + alarm +
+                ", notebook=" + notebook +
+                ", hasSync=" + hasSync +
+                ", preNotebook=" + preNotebook +
+                ", pendingIntent=" + pendingIntent +
+                '}';
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -149,5 +176,6 @@ public class Note implements Parcelable {
         dest.writeLong(alarm.getTime());
         dest.writeInt(hasSync ? 1 : 0);
         dest.writeLong(preNotebook);
+        dest.writeParcelable(pendingIntent, PARCELABLE_WRITE_RETURN_VALUE);
     }
 }

@@ -59,9 +59,9 @@ public class NoteAdapter extends ImageLoaderAdapter<NoteAdapter.ViewHolder> {
         holder.tvTitle.setText(note.getTitle());
         holder.tvContent.setText(note.getContent());
         holder.tvUpdate.setText("最后更新:" + FormatUtils.formatDate(note.getModify()));
-        if (note.getAlarm().compareTo(DateUtils.getCurrentDate()) > 0)
+        if (note.getAlarm().compareTo(DateUtils.getCurrentDate()) > 0) {
             holder.ivAlarm.setVisibility(View.VISIBLE);
-        else
+        } else
             holder.ivAlarm.setVisibility(View.GONE);
 
         Attach attach = AttachDAO.getInstance(holder.itemView.getContext()).queryFirstByNoteId(note.getId());
@@ -112,7 +112,7 @@ public class NoteAdapter extends ImageLoaderAdapter<NoteAdapter.ViewHolder> {
             tvContent = (TextView) itemView.findViewById(R.id.tv_note_info_content);
             tvUpdate = (TextView) itemView.findViewById(R.id.tv_note_info_update);
             iv = (ImageView) itemView.findViewById(R.id.iv_note_info);
-            ivAlarm = (ImageView) itemView.findViewById(R.id.iv_alarm);
+            ivAlarm = (ImageView) itemView.findViewById(R.id.iv_note_alarm);
         }
     }
 

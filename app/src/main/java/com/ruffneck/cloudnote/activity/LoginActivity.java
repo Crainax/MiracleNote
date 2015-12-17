@@ -12,6 +12,8 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVOSCloud;
 import com.avos.avoscloud.AVUser;
@@ -20,6 +22,7 @@ import com.ruffneck.cloudnote.R;
 import com.ruffneck.cloudnote.info.Constant;
 import com.ruffneck.cloudnote.utils.PixelUtil;
 import com.ruffneck.cloudnote.utils.SnackBarUtils;
+
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -79,7 +82,10 @@ public class LoginActivity extends AppCompatActivity {
                         SnackBarUtils.showSnackBar(viewShelter,"登录失败", Snackbar.LENGTH_LONG,"好的");
                     }
                 }else{
-                    SnackBarUtils.showSnackBar(viewShelter,e.getMessage(), Snackbar.LENGTH_LONG,"好的");
+                    JSONObject jsonObject = JSON.parseObject(e.getMessage());
+                    String error = jsonObject.getString("error");
+
+                    SnackBarUtils.showSnackBar(viewShelter,error, Snackbar.LENGTH_LONG,"好的");
                 }
             }
         });

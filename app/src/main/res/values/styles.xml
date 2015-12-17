@@ -17,6 +17,10 @@
         <item name="android:background">@color/colorDividerWhite</item>
     </style>
 
+    <style name="Theme.AppCompat.Light.Dialog.NoTitle">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+    </style>
 
     <style name="TextView_Login_QQ">
         <item name="android:textSize">14.0sp</item>
