@@ -132,6 +132,34 @@ public class NoteBookDAO {
         return noteBookList;
     }
 
+    public List<NoteBook> queryAllNoteBook() {
+        open();
+
+        List<NoteBook> noteBookList = new ArrayList<>();
+        Cursor cursor = database.query(DBConstants.NoteBook.TABLE_NAME, null,
+                DBConstants.NoteBook.COLUMN_ID + "<>?",
+                new String[]{DBConstants.NoteBook.ID_RECYCLE_BIN + ""}, null, null, null);
+
+        if (cursor != null) {
+            NoteBook noteBook;
+            while (cursor.moveToNext()) {
+                noteBook = new NoteBook();
+                noteBook.setId(cursor.getLong(cursor.getColumnIndex(DBConstants.NoteBook.COLUMN_ID)));
+                noteBook.setColor(cursor.getLong(cursor.getColumnIndex(DBConstants.NoteBook.COLUMN_COLOR)));
+                noteBook.setDetail(cursor.getString(cursor.getColumnIndex(DBConstants.NoteBook.COLUMN_DETAIL)));
+                noteBook.setName(cursor.getString(cursor.getColumnIndex(DBConstants.NoteBook.COLUMN_NAME)));
+                noteBook.setHasSync(cursor.getInt(cursor.getColumnIndex(DBConstants.NoteBook.COLUMN_SYNC)) == 1);
+                noteBookList.add(noteBook);
+            }
+
+            cursor.close();
+        }
+
+        close();
+
+        return noteBookList;
+    }
+
     @Nullable
     public NoteBook queryById(long notebookId) {
 

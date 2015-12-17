@@ -67,6 +67,7 @@ public class NoteDAO {
     public Note delete(Note note) {
         open();
 
+        AttachDAO.getInstance(mContext).deleteByNoteId(note.getId());
         database.delete(DBConstants.Note.TABLE_NAME, DBConstants.Note.COLUMN_ID + "=?", new String[]{note.getId() + ""});
 
         close();
@@ -165,6 +166,13 @@ public class NoteDAO {
 
         note.setPreNotebook(note.getNotebook());
         note.setNotebook(DBConstants.NoteBook.ID_RECYCLE_BIN);
+        update(note);
+
+    }
+
+    public void updateNoteBookById(Note note, long id) {
+
+        note.setNotebook(id);
         update(note);
 
     }

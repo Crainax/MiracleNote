@@ -1,5 +1,8 @@
 package com.ruffneck.cloudnote.activity;
 
+import android.app.AlarmManager;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -13,10 +16,11 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.ruffneck.cloudnote.R;
@@ -26,14 +30,18 @@ import com.ruffneck.cloudnote.models.note.Note;
 import com.ruffneck.cloudnote.models.note.attach.Attach;
 import com.ruffneck.cloudnote.models.note.attach.ImageAttach;
 import com.ruffneck.cloudnote.utils.AlertDialogUtils;
+import com.ruffneck.cloudnote.utils.DateUtils;
 import com.ruffneck.cloudnote.utils.FormatUtils;
 
 import java.net.URI;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
+import butterknife.OnLongClick;
 
 public class EditNoteActivity extends BaseActivity {
 
@@ -48,14 +56,58 @@ public class EditNoteActivity extends BaseActivity {
     TextInputLayout tilContent;
     @InjectView(R.id.iv_alarm)
     ImageView ivAlarm;
-    @InjectView(R.id.group_alarm)
-    RelativeLayout groupAlarm;
+    @InjectView(R.id.tv_alarm)
+    TextView tvAlarm;
     @InjectView(R.id.rv_attach)
     RecyclerView rvAttach;
     @InjectView(R.id.tv_note_create)
     TextView tvNoteCreate;
     @InjectView(R.id.tv_note_modify)
     TextView tvNoteModify;
+
+    @OnClick(R.id.group_alarm)
+    void setAlarmDate(View view) {
+
+        final Calendar calendar = Calendar.getInstance();
+        if (note.getAlarm().getTime() < DateUtils.getCurrentDate().getTime()) {
+            calendar.setTime(DateUtils.getCurrentDate());
+        } else {
+            calendar.setTime(note.getAlarm());
+        }
+
+
+        calendar.add(Calendar.HOUR, 1);
+
+        new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                calendar.set(Calendar.YEAR, year);
+                calendar.set(Calendar.MONTH, monthOfYear);
+                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+                //选完日期就要开始选择时间了
+                new TimePickerDialog(EditNoteActivity.this, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                        calendar.set(Calendar.MINUTE, minute);
+                        note.setAlarm(calendar.getTime());
+                        updateAlarmView();
+                    }
+                }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true).show();
+            }
+        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
+
+
+    }
+
+
+    @OnLongClick(R.id.group_alarm)
+    boolean cancelAlarmDate(View view) {
+        note.setAlarm(new Date(0));
+        updateAlarmView();
+        return true;
+    }
 
 
     private Note note = null;
@@ -208,7 +260,7 @@ public class EditNoteActivity extends BaseActivity {
 
                         int index = attachList.indexOf(attach);
                         attachList.remove(index);
-                        attachAdapter.notifyItemRemoved(index);
+                        attachAdapter.notifyDataSetChanged();
                         attachDAO.delete(attach);
 
                     }
@@ -217,6 +269,20 @@ public class EditNoteActivity extends BaseActivity {
         });
     }
 
+    /**
+     * Update the alarm textView and the imageView
+     */
+    private void updateAlarmView() {
+
+        if (note.getAlarm().getTime() > DateUtils.getCurrentDate().getTime()) {
+            tvAlarm.setText("提醒:" + FormatUtils.formatDate(note.getAlarm()));
+            ivAlarm.setImageResource(R.drawable.ic_alarm_clock);
+        } else {
+            tvAlarm.setText("点击添加提醒");
+            ivAlarm.setImageResource(R.drawable.ic_alarm_add_black_18dp);
+        }
+
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -248,6 +314,8 @@ public class EditNoteActivity extends BaseActivity {
                     URI uri = (URI) data.getSerializableExtra("uri");
                     Attach newAttach = new ImageAttach(uri.getPath(), DBConstants.Type.TYPE_IMAGE, note.getId());
                     insertAttach(newAttach);
+
+                    AlarmManager alarmManager;
 
                     break;
             }

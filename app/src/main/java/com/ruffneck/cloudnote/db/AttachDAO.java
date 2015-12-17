@@ -99,6 +99,18 @@ public class AttachDAO {
         close();
     }
 
+    public int deleteByNoteId(long id) {
+
+        open();
+
+        int raw = database.delete(DBConstants.Attach.TABLE_NAME, DBConstants.Attach.COLUMN_NOTE + "=?",
+                new String[]{id + ""});
+
+        close();
+
+        return raw;
+    }
+
     public List<Attach> queryByNoteId(long id) {
 
         open();

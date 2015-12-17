@@ -14,6 +14,23 @@ public class NoteBook implements Parcelable{
     private String detail;
     private boolean hasSync;
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        NoteBook noteBook = (NoteBook) o;
+
+        return id == noteBook.id;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (id ^ (id >>> 32));
+    }
+
     public long getId() {
         return id;
     }

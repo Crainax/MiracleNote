@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.PopupMenu;
@@ -12,7 +13,6 @@ import android.widget.Toast;
 import com.ruffneck.cloudnote.R;
 import com.ruffneck.cloudnote.activity.adapter.NoteAdapter;
 import com.ruffneck.cloudnote.db.NoteBookDAO;
-import com.ruffneck.cloudnote.db.NoteDAO;
 import com.ruffneck.cloudnote.models.note.Note;
 import com.ruffneck.cloudnote.models.note.NoteBook;
 import com.ruffneck.cloudnote.utils.AlertDialogUtils;
@@ -35,7 +35,17 @@ public class RecycleFragment extends NoteBookFragment {
 
     @Override
     public void onFabClick(FloatingActionButton fab) {
-
+        AlertDialogUtils.show(getActivity(), "注意", "确认清空回收站?(该过程不可逆!)", "确认", "取消", new AlertDialogUtils.OkCallBack() {
+            @Override
+            public void onOkClick(DialogInterface dialog, int which) {
+                for (Note note : noteList) {
+                    noteDAO.delete(note);
+                }
+                noteList.clear();
+                noteAdapter.notifyDataSetChanged();
+                Toast.makeText(getActivity(), "清空成功!", Toast.LENGTH_SHORT).show();
+            }
+        }, null);
     }
 
     @Override
@@ -73,17 +83,30 @@ public class RecycleFragment extends NoteBookFragment {
                 AlertDialogUtils.show(getActivity(), "注意", "是否还原该笔记?", "确认", "取消", new AlertDialogUtils.OkCallBack() {
                     @Override
                     public void onOkClick(DialogInterface dialog, int which) {
-                        long noteBookId = NoteDAO.getInstance(getActivity()).restoreFromRecycleBin(mChooseNote);
+                        long noteBookId = noteDAO.restoreFromRecycleBin(mChooseNote);
                         NoteBook noteBook = NoteBookDAO.getInstance(getActivity()).queryById(noteBookId);
                         removeNoteFromList();
 
                         assert noteBook != null;
-                        Toast.makeText(getActivity(), "成功还原到:" + noteBook.getName() + ".", Toast.LENGTH_SHORT).show();
+//                        SnackBarUtils.showSnackBar(getFab(), "成功还原到:" + noteBook.getName() + ".", 5000, "OK");
+                        Snackbar.make(getFab(), "成功还原到:" + noteBook.getName() + ".", Snackbar.LENGTH_LONG).show();
+
                     }
                 }, null);
 
                 break;
             case R.id.action_note_delete_forever:
+                AlertDialogUtils.show(getActivity(), "注意", "请确认是否永久删除该笔记?(该过程不可逆!)", "确认", "取消", new AlertDialogUtils.OkCallBack() {
+                    @Override
+                    public void onOkClick(DialogInterface dialog, int which) {
+
+                        noteDAO.delete(mChooseNote);
+                        removeNoteFromList();
+//                        SnackBarUtils.showSnackBar(getFab(), "永久删除成功!", 5000, "OK");
+                        Snackbar.make(getFab(), "永久删除成功!", Snackbar.LENGTH_LONG).show();
+                    }
+                }, null);
+
                 break;
         }
         return super.onOptionsItemSelected(item);

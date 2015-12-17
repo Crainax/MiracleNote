@@ -51,7 +51,7 @@ public class AllNoteBookFragment extends MainFragment {
     }
 
     private void initAdapter() {
-        noteBookList = NoteBookDAO.getInstance(getActivity()).queryAll();
+        noteBookList = NoteBookDAO.getInstance(getActivity()).queryAllNoteBook();
 
         rvNotebook.setLayoutManager(new StaggeredGridLayoutManager(SPAN_NOTEBOOK,StaggeredGridLayoutManager.VERTICAL));
 //        rvNotebook.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));

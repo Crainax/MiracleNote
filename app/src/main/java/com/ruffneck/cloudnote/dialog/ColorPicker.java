@@ -34,19 +34,19 @@ public class ColorPicker extends Dialog implements SeekBar.OnSeekBarChangeListen
     SeekBar sbGreen;
     @InjectView(R.id.blue)
     SeekBar sbBlue;
-    @InjectView(R.id.bt_confirm_color)
+    @InjectView(R.id.bt_confirm)
     Button btConfirmColor;
-    @InjectView(R.id.bt_cancel_color)
+    @InjectView(R.id.bt_cancel)
     Button btCancelColor;
 
-    @OnClick(R.id.bt_confirm_color)
+    @OnClick(R.id.bt_confirm)
     void onConfirm(View view) {
         dismiss();
         if (onConfirmListener != null)
             onConfirmListener.onConfirm(color);
     }
 
-    @OnClick(R.id.bt_cancel_color)
+    @OnClick(R.id.bt_cancel)
     void onCancel(View view) {
         dismiss();
     }
@@ -61,7 +61,7 @@ public class ColorPicker extends Dialog implements SeekBar.OnSeekBarChangeListen
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.color_picker);
+        setContentView(R.layout.dialog_colorpicker);
         ButterKnife.inject(this);
 
         sbBlue.setOnSeekBarChangeListener(this);

@@ -58,6 +58,9 @@ public abstract class MainFragment extends Fragment {
 
     }
 
+    public FloatingActionButton getFab() {
+        return fab;
+    }
 
     public int optionsMenu() {
         return 0;

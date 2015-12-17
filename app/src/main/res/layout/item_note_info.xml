@@ -3,9 +3,9 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:clickable="true"
-    android:background="?attr/selectableItemBackground"
     android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:clickable="true"
     android:orientation="vertical">
 
 
@@ -13,53 +13,66 @@
         android:id="@+id/iv_note_info"
         android:layout_width="100dp"
         android:layout_height="100dp"
+        android:layout_alignParentRight="true"
         android:layout_margin="8dp"
         android:scaleType="centerCrop"
-        android:layout_alignParentRight="true"
-        android:src="@android:drawable/ic_menu_camera"
-        />
+        android:src="@android:drawable/ic_menu_camera" />
 
     <RelativeLayout
-        android:layout_alignBottom="@id/iv_note_info"
-        android:layout_toLeftOf="@id/iv_note_info"
-        android:layout_alignTop="@id/iv_note_info"
-        android:layout_alignParentLeft="true"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/iv_note_info"
+        android:layout_alignParentLeft="true"
+        android:layout_alignTop="@id/iv_note_info"
+        android:layout_toLeftOf="@id/iv_note_info">
 
-        <TextView
-            android:layout_marginTop="5dp"
-            android:textStyle="bold"
-            android:id="@+id/tv_note_info_title"
+        <LinearLayout
+            android:id="@+id/ll_note_info_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:text="title"
-            android:textColor="@color/textTitle"
-            android:singleLine="true"
-            android:ellipsize="end"
-            android:textSize="16sp" />
+            android:layout_marginTop="5dp">
+
+            <ImageView
+                android:id="@+id/iv_note_alarm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:src="@drawable/ic_alarm_clock" />
+
+            <TextView
+                android:id="@+id/tv_note_info_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:text="title"
+                android:textColor="@color/textTitle"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+        </LinearLayout>
 
         <TextView
-            android:layout_marginTop="5dp"
             android:id="@+id/tv_note_info_update"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:text="更新时间:2015-12-10 18:24"
-            android:singleLine="true"
+            android:layout_marginTop="5dp"
             android:ellipsize="end"
+            android:singleLine="true"
+            android:text="更新时间:2015-12-10 18:24"
             android:textColor="@color/update_time"
             android:textSize="12sp" />
 
         <TextView
+            android:id="@+id/tv_note_info_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:layout_below="@id/tv_note_info_title"
             android:layout_above="@id/tv_note_info_update"
+            android:layout_below="@id/ll_note_info_title"
+            android:gravity="center_vertical"
             android:lines="3"
-            android:id="@+id/tv_note_info_content"
             android:text="content line1\ncontent line2\ncontent line3"
             android:textSize="14sp" />
 

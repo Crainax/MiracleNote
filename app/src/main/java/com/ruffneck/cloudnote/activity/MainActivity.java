@@ -267,7 +267,6 @@ public class MainActivity extends BaseActivity {
                 case REQUEST_CODE_NEW_BOOK:
                     refreshNotebookSubMenu();
                     setDefaultFragment();
-                    System.out.println("hahahahahahahahasadhkdjkfsdahjklsdhdsjlksdhfsadfsdhkldsf");
                     break;
                 case REQUEST_CODE_EDIT_BOOK:
                     NoteBook noteBook = data.getParcelableExtra("notebook");

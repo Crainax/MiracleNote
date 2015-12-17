@@ -92,7 +92,7 @@
         android:weightSum="2">
 
         <Button
-            android:id="@+id/bt_confirm_color"
+            android:id="@+id/bt_confirm"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -102,7 +102,7 @@
             android:textSize="20sp" />
 
         <Button
-            android:id="@+id/bt_cancel_color"
+            android:id="@+id/bt_cancel"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"

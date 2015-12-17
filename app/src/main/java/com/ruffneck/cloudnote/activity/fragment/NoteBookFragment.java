@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,7 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.ruffneck.cloudnote.R;
 import com.ruffneck.cloudnote.activity.EditNoteActivity;
@@ -27,10 +27,12 @@ import com.ruffneck.cloudnote.activity.adapter.NoteAdapter;
 import com.ruffneck.cloudnote.db.DBConstants;
 import com.ruffneck.cloudnote.db.NoteBookDAO;
 import com.ruffneck.cloudnote.db.NoteDAO;
+import com.ruffneck.cloudnote.dialog.NoteMover;
 import com.ruffneck.cloudnote.models.note.Note;
 import com.ruffneck.cloudnote.models.note.NoteBook;
 import com.ruffneck.cloudnote.utils.AlertDialogUtils;
 import com.ruffneck.cloudnote.utils.ColorsUtils;
+import com.ruffneck.cloudnote.utils.SnackBarUtils;
 
 import java.util.List;
 
@@ -44,7 +46,7 @@ public class NoteBookFragment extends MainFragment {
      */
     public static final int REQUEST_EDIT_NOTE = 0x124;
     public static final int REQUEST_ADD_NOTE = 0x125;
-    private List<Note> noteList;
+    protected List<Note> noteList;
     protected NoteAdapter noteAdapter;
     protected Note mChooseNote;
 
@@ -54,6 +56,7 @@ public class NoteBookFragment extends MainFragment {
     RecyclerView rvNote;
 
     private NoteBook noteBook;
+    protected NoteDAO noteDAO;
 
     public static NoteBookFragment newInstance(NoteBook noteBook) {
         NoteBookFragment noteBookFragment = new NoteBookFragment();
@@ -71,8 +74,9 @@ public class NoteBookFragment extends MainFragment {
 
         tvNotebookDetail.setText(noteBook.getDetail());
 
+        noteDAO = NoteDAO.getInstance(getActivity());
 
-        noteList = NoteDAO.getInstance(getActivity()).queryByNoteBookId(noteBook.getId());
+        noteList = noteDAO.queryByNoteBookId(noteBook.getId());
         noteAdapter = new NoteAdapter(noteList);
 
         initAdapter(noteAdapter);
@@ -206,7 +210,15 @@ public class NoteBookFragment extends MainFragment {
                             MainActivity mainActivity = (MainActivity) getActivity();
                             mainActivity.refreshNotebookSubMenu();
                             mainActivity.setDefaultFragment();
-                            Toast.makeText(getActivity(), "删除成功,所有笔记已经移动到回收站.", Toast.LENGTH_SHORT).show();
+
+                            //Move the note belong to the notebook to the recycle bin.
+                            List<Note> noteList = noteDAO.queryByNoteBookId(noteBook.getId());
+                            for (Note note : noteList) {
+                                noteDAO.moveToRecycleBin(note);
+                            }
+//                            Toast.makeText(getActivity(), "删除成功,所有笔记已经移动到回收站.", Toast.LENGTH_SHORT).show();
+//                            SnackBarUtils.showSnackBar(getFab(), "删除成功,所有笔记已经移动到回收站.", 5000, "OK");
+                            Snackbar.make(getFab(), "删除成功,所有笔记已经移动到回收站.", Snackbar.LENGTH_LONG).show();
                         }
                     }, null);
                 break;
@@ -216,15 +228,27 @@ public class NoteBookFragment extends MainFragment {
                 getMainActivity().startActivityForResult(intent, MainActivity.REQUEST_CODE_EDIT_BOOK);
                 break;
             case R.id.action_move_note:
+                new NoteMover(getActivity(), noteBook, new NoteMover.OnConfirmListener() {
+                    @Override
+                    public void onConfirm(NoteBook noteBook) {
+                        if (NoteBookFragment.this.noteBook.getId() != noteBook.getId()) {
+                            noteDAO.updateNoteBookById(mChooseNote, noteBook.getId());
+//                            SnackBarUtils.showSnackBar(getFab(), "移动成功!", 5000, "OK");
 
+                            Snackbar.make(getFab(), "删除成功,所有笔记已经移动到回收站.", Snackbar.LENGTH_LONG).show();
+                            removeNoteFromList();
+                        }
+                    }
+                }).show();
                 break;
             case R.id.action_delete_note:
                 AlertDialogUtils.show(getActivity(), "注意", "是否把该笔记移动到回收站?", "确认", "取消", new AlertDialogUtils.OkCallBack() {
                     @Override
                     public void onOkClick(DialogInterface dialog, int which) {
-                        NoteDAO.getInstance(getActivity()).moveToRecycleBin(mChooseNote);
+                        noteDAO.moveToRecycleBin(mChooseNote);
                         removeNoteFromList();
-                        Toast.makeText(getActivity(), "成功移到回收站.", Toast.LENGTH_SHORT).show();
+//                        SnackBarUtils.showSnackBar(getFab(), "成功移到回收站.", 5000, "OK");
+                        Snackbar.make(getFab(), "成功移到回收站.", Snackbar.LENGTH_LONG).show();
                     }
                 }, null);
                 break;
@@ -240,6 +264,7 @@ public class NoteBookFragment extends MainFragment {
     protected void removeNoteFromList() {
         int index = noteList.indexOf(mChooseNote);
         noteList.remove(index);
-        noteAdapter.notifyItemRemoved(index);
+//        noteAdapter.notifyItemRemoved(index);
+        noteAdapter.notifyDataSetChanged();
     }
 }
