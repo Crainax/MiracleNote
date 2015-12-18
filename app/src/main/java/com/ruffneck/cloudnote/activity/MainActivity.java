@@ -3,6 +3,8 @@ package com.ruffneck.cloudnote.activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -13,7 +15,12 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
+import android.view.View;
+import android.widget.TextView;
 
+import com.avos.avoscloud.AVUser;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.ruffneck.cloudnote.R;
 import com.ruffneck.cloudnote.activity.fragment.AllNoteBookFragment;
 import com.ruffneck.cloudnote.activity.fragment.MainFragment;
@@ -26,11 +33,21 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends BaseActivity {
 
     public static final int REQUEST_CODE_NEW_BOOK = 0x123;
     public static final int REQUEST_CODE_EDIT_BOOK = 0x122;
+    protected ImageLoader loader = ImageLoader.getInstance();
+    protected DisplayImageOptions options = new DisplayImageOptions.Builder()
+            .showImageOnLoading(R.drawable.placeholder_avatar_320)
+            .showImageOnFail(R.drawable.placeholder_avatar_320)
+            .cacheInMemory(true)
+            .cacheOnDisk(true)
+            .bitmapConfig(Bitmap.Config.RGB_565)
+            .build();
+    private SharedPreferences mPref;
 
     @InjectView(R.id.nv)
     NavigationView nv;
@@ -40,16 +57,6 @@ public class MainActivity extends BaseActivity {
     FloatingActionButton fabMain;
 
     MainFragment mCurrentFragment;
-
-//    public interface InitToolbar{
-//        void initToolbar(Toolbar toolbar);
-//    }
-//
-//    private InitToolbar toolbarComeback ;
-//
-//    public void setToolbarComeback(InitToolbar toolbarComeback) {
-//        this.toolbarComeback = toolbarComeback;
-//    }
 
     private SubMenu subMenu;
     private MenuItem mCurrentItem;
@@ -66,11 +73,26 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        mPref = getSharedPreferences("config", MODE_PRIVATE);
 
         ButterKnife.inject(this);
         initDrawer();
 
+
         setDefaultFragment();
+    }
+
+    private void initUserInfo() {
+        AVUser avUser = AVUser.getCurrentUser();
+        if (avUser != null) {
+            View headerView = nv.getHeaderView(0);
+            TextView tvUserEmail = (TextView) headerView.findViewById(R.id.tv_user_email);
+            TextView tvUserName = (TextView) headerView.findViewById(R.id.tv_user_name);
+            CircleImageView circlePortrait = (CircleImageView) headerView.findViewById(R.id.iv_portrait);
+            tvUserEmail.setText(avUser.getEmail());
+            tvUserName.setText(mPref.getString("nickname", avUser.getUsername()));
+            loader.displayImage(mPref.getString("figureUrl","http://www.sdfsdfafdc.xcx"),circlePortrait);
+        }
     }
 
     private void initDrawer() {
@@ -81,6 +103,7 @@ public class MainActivity extends BaseActivity {
 
         initNoteBookMenu();
 
+        initUserInfo();
 //        setMainFragment(new NewBookFragment());
     }
 
@@ -189,6 +212,7 @@ public class MainActivity extends BaseActivity {
 
                 break;
             case R.id.action_exit:
+                AVUser.logOut();
                 Intent intent = new Intent(this, LoginActivity.class);
                 startActivity(intent);
                 break;

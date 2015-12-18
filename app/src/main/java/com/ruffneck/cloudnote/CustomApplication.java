@@ -5,6 +5,7 @@ import android.app.Application;
 import android.app.PendingIntent;
 import android.content.Intent;
 
+import com.avos.avoscloud.AVOSCloud;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.cache.memory.impl.WeakMemoryCache;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -12,6 +13,7 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.ruffneck.cloudnote.activity.AlarmActivity;
 import com.ruffneck.cloudnote.db.NoteDAO;
+import com.ruffneck.cloudnote.info.Constant;
 import com.ruffneck.cloudnote.models.note.Note;
 import com.ruffneck.cloudnote.utils.DateUtils;
 
@@ -31,6 +33,7 @@ public class CustomApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
+        AVOSCloud.initialize(this, Constant.LEANCLOUD_ID, Constant.LEANCLOUD_KEY);
         mCustomApplication = this;
 
         initImageLoader();

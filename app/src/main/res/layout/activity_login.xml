@@ -132,7 +132,7 @@
                 style="@style/TextView_Login_QQ"
                 android:layout_marginTop="24dip"
                 android:background="@drawable/selector_qqlogin"
-                android:text="QQ登录" />
+                android:text="获取QQ信息" />
 
         </LinearLayout>
 

@@ -8,4 +8,6 @@ public class Constant {
     public static final int DATABASE_VERSION = 3;
     public static final String DATABASE_NAME = "note.db";
 
+    public static final String QQ_APPID = "1104952323";
+    public static final String PASSWORD = "nzj1341125";
 }
