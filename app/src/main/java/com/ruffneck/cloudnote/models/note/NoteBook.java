@@ -3,16 +3,14 @@ package com.ruffneck.cloudnote.models.note;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-/**
- * Created by 佛剑分说 on 2015/12/6.
- */
-public class NoteBook implements Parcelable{
+public class NoteBook implements Parcelable {
 
     private long id = -1;
     private String name;
     private long color = 0x0000ff;
     private String detail;
     private boolean hasSync;
+    private String objectId = "";
 
 
     @Override
@@ -71,6 +69,14 @@ public class NoteBook implements Parcelable{
         this.hasSync = hasSync;
     }
 
+    public String getObjectId() {
+        return objectId;
+    }
+
+    public void setObjectId(String objectId) {
+        this.objectId = objectId;
+    }
+
     public NoteBook() {
     }
 
@@ -87,13 +93,14 @@ public class NoteBook implements Parcelable{
 
 
     protected NoteBook(Parcel in) {
-        id=in.readLong();
+        id = in.readLong();
         name = in.readString();
         detail = in.readString();
         color = in.readLong();
         hasSync = in.readInt() == 1;
+        objectId = in.readString();
     }
-    
+
     @Override
     public int describeContents() {
         return 0;
@@ -106,5 +113,6 @@ public class NoteBook implements Parcelable{
         dest.writeString(detail);
         dest.writeLong(color);
         dest.writeInt(hasSync ? 1 : 0);
+        dest.writeString(objectId);
     }
 }

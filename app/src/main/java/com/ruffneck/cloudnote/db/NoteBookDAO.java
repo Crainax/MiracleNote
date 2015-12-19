@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 import com.ruffneck.cloudnote.models.note.NoteBook;
 
@@ -44,10 +45,7 @@ public class NoteBookDAO {
 
         ContentValues values = new ContentValues();
 
-        values.put(DBConstants.NoteBook.COLUMN_NAME, noteBook.getName());
-        values.put(DBConstants.NoteBook.COLUMN_COLOR, noteBook.getColor());
-        values.put(DBConstants.NoteBook.COLUMN_DETAIL, noteBook.getDetail());
-        values.put(DBConstants.NoteBook.COLUMN_SYNC, noteBook.isHasSync() ? 1 : 0);
+        setValuesByNoteBook(noteBook, values);
 
         long id = database.insert(DBConstants.NoteBook.TABLE_NAME, null, values);
         noteBook.setId(id);
@@ -58,14 +56,26 @@ public class NoteBookDAO {
         return id;
     }
 
-    public void update(NoteBook noteBook) {
-        open();
-        ContentValues values = new ContentValues();
-
+    protected void setValuesByNoteBook(NoteBook noteBook, ContentValues values) {
         values.put(DBConstants.NoteBook.COLUMN_NAME, noteBook.getName());
         values.put(DBConstants.NoteBook.COLUMN_COLOR, noteBook.getColor());
         values.put(DBConstants.NoteBook.COLUMN_DETAIL, noteBook.getDetail());
         values.put(DBConstants.NoteBook.COLUMN_SYNC, noteBook.isHasSync() ? 1 : 0);
+        if (!TextUtils.isEmpty(noteBook.getObjectId()))
+            values.put(DBConstants.NoteBook.COLUMN_OBJECTID, noteBook.getObjectId());
+    }
+
+    public void update(NoteBook noteBook) {
+
+        update(noteBook, false);
+    }
+
+    public void update(NoteBook noteBook, boolean hasSync) {
+        open();
+        ContentValues values = new ContentValues();
+
+        noteBook.setHasSync(hasSync);
+        setValuesByNoteBook(noteBook, values);
 
         database.update(DBConstants.NoteBook.TABLE_NAME, values, DBConstants.NoteBook.COLUMN_ID + "=?", new String[]{noteBook.getId() + ""});
 
@@ -116,11 +126,7 @@ public class NoteBookDAO {
             NoteBook noteBook;
             while (cursor.moveToNext()) {
                 noteBook = new NoteBook();
-                noteBook.setId(cursor.getLong(cursor.getColumnIndex(DBConstants.NoteBook.COLUMN_ID)));
-                noteBook.setColor(cursor.getLong(cursor.getColumnIndex(DBConstants.NoteBook.COLUMN_COLOR)));
-                noteBook.setDetail(cursor.getString(cursor.getColumnIndex(DBConstants.NoteBook.COLUMN_DETAIL)));
-                noteBook.setName(cursor.getString(cursor.getColumnIndex(DBConstants.NoteBook.COLUMN_NAME)));
-                noteBook.setHasSync(cursor.getInt(cursor.getColumnIndex(DBConstants.NoteBook.COLUMN_SYNC)) == 1);
+                setNoteBookByCursor(cursor, noteBook);
                 noteBookList.add(noteBook);
             }
 
@@ -130,6 +136,16 @@ public class NoteBookDAO {
         close();
 
         return noteBookList;
+    }
+
+    protected void setNoteBookByCursor(Cursor cursor, NoteBook noteBook) {
+        noteBook.setId(cursor.getLong(cursor.getColumnIndex(DBConstants.NoteBook.COLUMN_ID)));
+        noteBook.setColor(cursor.getLong(cursor.getColumnIndex(DBConstants.NoteBook.COLUMN_COLOR)));
+        noteBook.setDetail(cursor.getString(cursor.getColumnIndex(DBConstants.NoteBook.COLUMN_DETAIL)));
+        noteBook.setName(cursor.getString(cursor.getColumnIndex(DBConstants.NoteBook.COLUMN_NAME)));
+        noteBook.setHasSync(cursor.getInt(cursor.getColumnIndex(DBConstants.NoteBook.COLUMN_SYNC)) == 1);
+        noteBook.setObjectId(cursor.getString(cursor.getColumnIndex(DBConstants.NoteBook.COLUMN_OBJECTID)));
+
     }
 
     public List<NoteBook> queryAllNoteBook() {
@@ -144,11 +160,7 @@ public class NoteBookDAO {
             NoteBook noteBook;
             while (cursor.moveToNext()) {
                 noteBook = new NoteBook();
-                noteBook.setId(cursor.getLong(cursor.getColumnIndex(DBConstants.NoteBook.COLUMN_ID)));
-                noteBook.setColor(cursor.getLong(cursor.getColumnIndex(DBConstants.NoteBook.COLUMN_COLOR)));
-                noteBook.setDetail(cursor.getString(cursor.getColumnIndex(DBConstants.NoteBook.COLUMN_DETAIL)));
-                noteBook.setName(cursor.getString(cursor.getColumnIndex(DBConstants.NoteBook.COLUMN_NAME)));
-                noteBook.setHasSync(cursor.getInt(cursor.getColumnIndex(DBConstants.NoteBook.COLUMN_SYNC)) == 1);
+                setNoteBookByCursor(cursor, noteBook);
                 noteBookList.add(noteBook);
             }
 
@@ -172,11 +184,7 @@ public class NoteBookDAO {
         if (cursor != null) {
             if (cursor.moveToNext()) {
                 noteBook = new NoteBook();
-                noteBook.setId(cursor.getLong(cursor.getColumnIndex(DBConstants.NoteBook.COLUMN_ID)));
-                noteBook.setColor(cursor.getLong(cursor.getColumnIndex(DBConstants.NoteBook.COLUMN_COLOR)));
-                noteBook.setDetail(cursor.getString(cursor.getColumnIndex(DBConstants.NoteBook.COLUMN_DETAIL)));
-                noteBook.setName(cursor.getString(cursor.getColumnIndex(DBConstants.NoteBook.COLUMN_NAME)));
-                noteBook.setHasSync(cursor.getInt(cursor.getColumnIndex(DBConstants.NoteBook.COLUMN_SYNC)) == 1);
+                setNoteBookByCursor(cursor, noteBook);
             }
 
             cursor.close();
@@ -198,4 +206,35 @@ public class NoteBookDAO {
         return noteBook;
     }
 
+    public void createObjectId(NoteBook notebook, String objectId) {
+
+        notebook.setObjectId(objectId);
+        update(notebook);
+
+    }
+
+    public List<NoteBook> queryByUnsyncNote() {
+
+        open();
+
+        List<NoteBook> noteBookList = new ArrayList<>();
+        Cursor cursor = database.query(DBConstants.NoteBook.TABLE_NAME, null,
+                DBConstants.NoteBook.COLUMN_SYNC + "=?",
+                new String[]{0 + ""}, null, null, null);
+
+        if (cursor != null) {
+            NoteBook noteBook;
+            while (cursor.moveToNext()) {
+                noteBook = new NoteBook();
+                setNoteBookByCursor(cursor, noteBook);
+                noteBookList.add(noteBook);
+            }
+
+            cursor.close();
+        }
+
+        close();
+
+        return noteBookList;
+    }
 }

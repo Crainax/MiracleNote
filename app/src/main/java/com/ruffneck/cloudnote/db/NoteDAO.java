@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.text.TextUtils;
 
 import com.ruffneck.cloudnote.models.note.Note;
 
@@ -17,7 +18,7 @@ public class NoteDAO {
     private SQLiteDatabase database;
     private DBHelper dbHelper;
 
-    public static NoteDAO noteDAO;
+    private static NoteDAO noteDAO;
     private Context mContext;
 
 
@@ -45,6 +46,16 @@ public class NoteDAO {
 
         ContentValues values = new ContentValues();
 
+        setValuesByNote(note, values);
+
+        long id = database.insert(DBConstants.Note.TABLE_NAME, null, values);
+        note.setId(id);
+        close();
+
+        return id;
+    }
+
+    protected void setValuesByNote(Note note, ContentValues values) {
         values.put(DBConstants.Note.COLUMN_TITLE, note.getTitle());
         values.put(DBConstants.Note.COLUMN_CONTENT, note.getContent());
         if (note.getAlarm() != null)
@@ -56,12 +67,8 @@ public class NoteDAO {
         values.put(DBConstants.Note.COLUMN_NOTEBOOK, note.getNotebook());
         values.put(DBConstants.Note.COLUMN_PRENOTEBOOK, note.getPreNotebook());
         values.put(DBConstants.Note.COLUMN_SYNC, note.isHasSync() ? 1 : 0);
-
-        long id = database.insert(DBConstants.Note.TABLE_NAME, null, values);
-        note.setId(id);
-        close();
-
-        return id;
+        if (!TextUtils.isEmpty(note.getObjectId()))
+            values.put(DBConstants.Note.COLUMN_OBJECTID, note.getObjectId());
     }
 
     public Note delete(Note note) {
@@ -76,20 +83,15 @@ public class NoteDAO {
     }
 
     public void update(Note note) {
+        update(note, false);
+    }
+
+    public void update(Note note, boolean hasSync) {
         open();
         ContentValues values = new ContentValues();
 
-        values.put(DBConstants.Note.COLUMN_TITLE, note.getTitle());
-        values.put(DBConstants.Note.COLUMN_CONTENT, note.getContent());
-        if (note.getAlarm() != null)
-            values.put(DBConstants.Note.COLUMN_DATE_ALARM, note.getAlarm().getTime());
-        if (note.getCreate() != null)
-            values.put(DBConstants.Note.COLUMN_DATE_CREATE, note.getCreate().getTime());
-        if (note.getModify() != null)
-            values.put(DBConstants.Note.COLUMN_DATE_MODIFY, note.getModify().getTime());
-        values.put(DBConstants.Note.COLUMN_NOTEBOOK, note.getNotebook());
-        values.put(DBConstants.Note.COLUMN_PRENOTEBOOK, note.getPreNotebook());
-        values.put(DBConstants.Note.COLUMN_SYNC, note.isHasSync() ? 1 : 0);
+        note.setHasSync(hasSync);
+        setValuesByNote(note, values);
 
         database.update(DBConstants.Note.TABLE_NAME, values, DBConstants.Note.COLUMN_ID + "=?", new String[]{note.getId() + ""});
 
@@ -141,15 +143,7 @@ public class NoteDAO {
             Note note;
             while (cursor.moveToNext()) {
                 note = new Note();
-                note.setId(cursor.getLong(cursor.getColumnIndex(DBConstants.Note.COLUMN_ID)));
-                note.setTitle(cursor.getString(cursor.getColumnIndex(DBConstants.Note.COLUMN_TITLE)));
-                note.setContent(cursor.getString(cursor.getColumnIndex(DBConstants.Note.COLUMN_CONTENT)));
-                note.setCreate(new Date(cursor.getLong(cursor.getColumnIndex(DBConstants.Note.COLUMN_DATE_CREATE))));
-                note.setModify(new Date(cursor.getLong(cursor.getColumnIndex(DBConstants.Note.COLUMN_DATE_MODIFY))));
-                note.setAlarm(new Date(cursor.getLong(cursor.getColumnIndex(DBConstants.Note.COLUMN_DATE_ALARM))));
-                note.setNotebook(cursor.getLong(cursor.getColumnIndex(DBConstants.Note.COLUMN_NOTEBOOK)));
-                note.setPreNotebook(cursor.getLong(cursor.getColumnIndex(DBConstants.Note.COLUMN_PRENOTEBOOK)));
-                note.setHasSync(cursor.getInt(cursor.getColumnIndex(DBConstants.Note.COLUMN_SYNC)) == 1);
+                setNoteByCursor(cursor, note);
                 noteList.add(note);
             }
 
@@ -174,15 +168,45 @@ public class NoteDAO {
             Note note;
             while (cursor.moveToNext()) {
                 note = new Note();
-                note.setId(cursor.getLong(cursor.getColumnIndex(DBConstants.Note.COLUMN_ID)));
-                note.setTitle(cursor.getString(cursor.getColumnIndex(DBConstants.Note.COLUMN_TITLE)));
-                note.setContent(cursor.getString(cursor.getColumnIndex(DBConstants.Note.COLUMN_CONTENT)));
-                note.setCreate(new Date(cursor.getLong(cursor.getColumnIndex(DBConstants.Note.COLUMN_DATE_CREATE))));
-                note.setModify(new Date(cursor.getLong(cursor.getColumnIndex(DBConstants.Note.COLUMN_DATE_MODIFY))));
-                note.setAlarm(new Date(cursor.getLong(cursor.getColumnIndex(DBConstants.Note.COLUMN_DATE_ALARM))));
-                note.setNotebook(cursor.getLong(cursor.getColumnIndex(DBConstants.Note.COLUMN_NOTEBOOK)));
-                note.setPreNotebook(cursor.getLong(cursor.getColumnIndex(DBConstants.Note.COLUMN_PRENOTEBOOK)));
-                note.setHasSync(cursor.getInt(cursor.getColumnIndex(DBConstants.Note.COLUMN_SYNC)) == 1);
+                setNoteByCursor(cursor, note);
+                noteList.add(note);
+            }
+
+            cursor.close();
+        }
+
+        close();
+
+        return noteList;
+
+    }
+
+    protected void setNoteByCursor(Cursor cursor, Note note) {
+        note.setId(cursor.getLong(cursor.getColumnIndex(DBConstants.Note.COLUMN_ID)));
+        note.setTitle(cursor.getString(cursor.getColumnIndex(DBConstants.Note.COLUMN_TITLE)));
+        note.setContent(cursor.getString(cursor.getColumnIndex(DBConstants.Note.COLUMN_CONTENT)));
+        note.setCreate(new Date(cursor.getLong(cursor.getColumnIndex(DBConstants.Note.COLUMN_DATE_CREATE))));
+        note.setModify(new Date(cursor.getLong(cursor.getColumnIndex(DBConstants.Note.COLUMN_DATE_MODIFY))));
+        note.setAlarm(new Date(cursor.getLong(cursor.getColumnIndex(DBConstants.Note.COLUMN_DATE_ALARM))));
+        note.setNotebook(cursor.getLong(cursor.getColumnIndex(DBConstants.Note.COLUMN_NOTEBOOK)));
+        note.setPreNotebook(cursor.getLong(cursor.getColumnIndex(DBConstants.Note.COLUMN_PRENOTEBOOK)));
+        note.setHasSync(cursor.getInt(cursor.getColumnIndex(DBConstants.Note.COLUMN_SYNC)) == 1);
+        note.setObjectId(cursor.getString(cursor.getColumnIndex(DBConstants.Note.COLUMN_OBJECTID)));
+    }
+
+    public List<Note> queryByUnsyncNote() {
+        open();
+
+        List<Note> noteList = new ArrayList<>();
+        Cursor cursor = database.query(DBConstants.Note.TABLE_NAME, null,
+                DBConstants.Note.COLUMN_SYNC + "=?",
+                new String[]{0 + ""}, null, null, null);
+
+        if (cursor != null) {
+            Note note;
+            while (cursor.moveToNext()) {
+                note = new Note();
+                setNoteByCursor(cursor, note);
                 noteList.add(note);
             }
 
@@ -206,6 +230,13 @@ public class NoteDAO {
     public void updateNoteBookById(Note note, long id) {
 
         note.setNotebook(id);
+        update(note);
+
+    }
+
+    public void createObjectId(Note note, String objectId) {
+
+        note.setObjectId(objectId);
         update(note);
 
     }

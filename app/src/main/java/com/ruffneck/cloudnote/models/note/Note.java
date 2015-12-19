@@ -18,6 +18,7 @@ public class Note implements Parcelable {
     private boolean hasSync = false;
     private long preNotebook = 1;
     private PendingIntent pendingIntent;
+    private String objectId = "";
 
     public Note() {
 
@@ -50,6 +51,7 @@ public class Note implements Parcelable {
         hasSync = in.readInt() == 1;
         preNotebook = in.readLong();
         pendingIntent = in.readParcelable(PendingIntent.class.getClassLoader());
+        objectId = in.readString();
     }
 
     public static final Creator<Note> CREATOR = new Creator<Note>() {
@@ -144,6 +146,14 @@ public class Note implements Parcelable {
         this.pendingIntent = pendingIntent;
     }
 
+    public String getObjectId() {
+        return objectId;
+    }
+
+    public void setObjectId(String objectId) {
+        this.objectId = objectId;
+    }
+
     @Override
     public String toString() {
         return "Note{" +
@@ -157,6 +167,7 @@ public class Note implements Parcelable {
                 ", hasSync=" + hasSync +
                 ", preNotebook=" + preNotebook +
                 ", pendingIntent=" + pendingIntent +
+                ", objectId='" + objectId + '\'' +
                 '}';
     }
 
@@ -177,5 +188,6 @@ public class Note implements Parcelable {
         dest.writeInt(hasSync ? 1 : 0);
         dest.writeLong(preNotebook);
         dest.writeParcelable(pendingIntent, PARCELABLE_WRITE_RETURN_VALUE);
+        dest.writeString(objectId);
     }
 }

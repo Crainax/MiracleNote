@@ -31,14 +31,19 @@ public class DBHelper extends SQLiteOpenHelper {
                 DBConstants.Note.COLUMN_DATE_ALARM + " long," +
                 DBConstants.Note.COLUMN_NOTEBOOK + " long," +
                 DBConstants.Note.COLUMN_DATE_CREATE + " long," +
-                DBConstants.Note.COLUMN_DATE_MODIFY + " long)");
+                DBConstants.Note.COLUMN_DATE_MODIFY + " long," +
+                DBConstants.Note.COLUMN_PRENOTEBOOK + " long," +
+                DBConstants.Note.COLUMN_SYNC + " int," +
+                DBConstants.Note.COLUMN_OBJECTID + " text)");
 
         db.execSQL("create table " +
                 DBConstants.NoteBook.TABLE_NAME + "(" +
                 DBConstants.NoteBook.COLUMN_ID + " integer primary key autoincrement," +
                 DBConstants.NoteBook.COLUMN_NAME + " text," +
                 DBConstants.NoteBook.COLUMN_DETAIL + " text," +
-                DBConstants.NoteBook.COLUMN_COLOR + " long)");
+                DBConstants.NoteBook.COLUMN_COLOR + " long," +
+                DBConstants.NoteBook.COLUMN_SYNC + " int," +
+                DBConstants.NoteBook.COLUMN_OBJECTID + " text)");
 
         db.execSQL("create table " +
                 DBConstants.Type.TABLE_NAME + "(" +
@@ -47,18 +52,22 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
         //Insert the default data
-        db.execSQL("insert into " + DBConstants.NoteBook.TABLE_NAME + " values(?,?,?,?)", new Object[]{
+        db.execSQL("insert into " + DBConstants.NoteBook.TABLE_NAME + " values(?,?,?,?,?,?)", new Object[]{
                 DBConstants.NoteBook.ID_DEFAULT_NOTEBOOK,
                 DBConstants.NoteBook.DEFAULT_NOTEBOOK_NAME,
                 DBConstants.NoteBook.DEFAULT_NOTEBOOK_DETAIL,
-                DBConstants.NoteBook.DEFAULT_NOTEBOOK_COLOR
+                DBConstants.NoteBook.DEFAULT_NOTEBOOK_COLOR,
+                0,
+                ""
         });
 
-        db.execSQL("insert into " + DBConstants.NoteBook.TABLE_NAME + " values(?,?,?,?)", new Object[]{
+        db.execSQL("insert into " + DBConstants.NoteBook.TABLE_NAME + " values(?,?,?,?,?,?)", new Object[]{
                 DBConstants.NoteBook.ID_RECYCLE_BIN,
                 DBConstants.NoteBook.RECYCLE_BIN_NAME,
                 DBConstants.NoteBook.RECYCLE_BIN_DETAIL,
-                DBConstants.NoteBook.RECYCLE_BIN_COLOR
+                DBConstants.NoteBook.RECYCLE_BIN_COLOR,
+                0,
+                ""
         });
 
         db.execSQL("insert into " + DBConstants.Type.TABLE_NAME + " values(?,?)", new Object[]{
@@ -92,6 +101,12 @@ public class DBHelper extends SQLiteOpenHelper {
                         DBConstants.NoteBook.COLUMN_SYNC + " integer");
                 System.out.println("database version update from 2");
                 break;
+            case 3:
+                db.execSQL("ALTER TABLE " + DBConstants.NoteBook.TABLE_NAME + " ADD COLUMN " +
+                        DBConstants.NoteBook.COLUMN_OBJECTID + " text");
+                db.execSQL("ALTER TABLE " + DBConstants.Note.TABLE_NAME + " ADD COLUMN " +
+                        DBConstants.Note.COLUMN_OBJECTID + " text");
+                System.out.println("database version update from 3");
         }
     }
 }

@@ -13,6 +13,7 @@ public class DBConstants  {
         public static final String COLUMN_COLOR = "color";
         public static final String COLUMN_DETAIL = "detail";
         public static final String COLUMN_SYNC = "has_sync";
+        public static final String COLUMN_OBJECTID = "object_id";
         public static final String TABLE_NAME = "notebook";
         public static final int ID_DEFAULT_NOTEBOOK = 1;
         public static final int ID_RECYCLE_BIN = 2;
@@ -37,6 +38,7 @@ public class DBConstants  {
         public static final String COLUMN_NOTEBOOK = "notebook_id";
         public static final String COLUMN_SYNC = "has_sync";
         public static final String COLUMN_PRENOTEBOOK = "pre_notebook";
+        public static final String COLUMN_OBJECTID = "object_id";
         public static final String TABLE_NAME = "note";
     }
 

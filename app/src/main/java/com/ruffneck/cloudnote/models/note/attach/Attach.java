@@ -1,6 +1,9 @@
 package com.ruffneck.cloudnote.models.note.attach;
 
-public abstract class Attach{
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public abstract class Attach implements Parcelable {
 
     public String localURL;
     public String netURL;
@@ -8,7 +11,7 @@ public abstract class Attach{
     private long id;
     private long noteId;
 
-    public Attach(){
+    public Attach() {
 
     }
 
@@ -44,5 +47,27 @@ public abstract class Attach{
 
     public void setNoteId(long noteId) {
         this.noteId = noteId;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(localURL);
+        dest.writeString(netURL);
+        dest.writeInt(type);
+        dest.writeLong(id);
+        dest.writeLong(noteId);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    protected Attach(Parcel in) {
+        localURL = in.readString();
+        netURL = in.readString();
+        type = in.readInt();
+        id = in.readLong();
+        noteId = in.readLong();
     }
 }

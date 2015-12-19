@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v4.internal.view.SupportMenuItem;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -17,6 +18,7 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.avos.avoscloud.AVUser;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -28,7 +30,10 @@ import com.ruffneck.cloudnote.activity.fragment.NoteBookFragment;
 import com.ruffneck.cloudnote.activity.fragment.RecycleFragment;
 import com.ruffneck.cloudnote.db.DBConstants;
 import com.ruffneck.cloudnote.models.note.NoteBook;
+import com.ruffneck.cloudnote.utils.SyncUtils;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.List;
 
 import butterknife.ButterKnife;
@@ -91,7 +96,7 @@ public class MainActivity extends BaseActivity {
             CircleImageView circlePortrait = (CircleImageView) headerView.findViewById(R.id.iv_portrait);
             tvUserEmail.setText(avUser.getEmail());
             tvUserName.setText(mPref.getString("nickname", avUser.getUsername()));
-            loader.displayImage(mPref.getString("figureUrl","http://www.sdfsdfafdc.xcx"),circlePortrait);
+            loader.displayImage(mPref.getString("figureUrl", "http://www.sdfsdfafdc.xcx"), circlePortrait);
         }
     }
 
@@ -141,6 +146,9 @@ public class MainActivity extends BaseActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
 
 
+        setIconEnable(menu, true);
+        Drawable uploadDrawable = getDrawable(R.drawable.ic_cloud_upload_24dp);
+        Drawable downloadDrawable = getDrawable(R.drawable.ic_cloud_download_24dp);
         if (mCurrentFragment != null && mCurrentFragment.optionsMenu() != 0) {
             getMenuInflater().inflate(mCurrentFragment.optionsMenu(), menu);
 
@@ -149,11 +157,39 @@ public class MainActivity extends BaseActivity {
                 Drawable icon = item.getIcon();
                 icon.setTint(mCurrentFragment.optionsMenuItemColor());
                 item.setIcon(icon);
+                if (uploadDrawable != null) {
+                    uploadDrawable.setTint(mCurrentFragment.optionsMenuItemColor());
+                }
+                if (downloadDrawable != null) {
+                    downloadDrawable.setTint(mCurrentFragment.optionsMenuItemColor());
+                }
             }
         } else
             getMenuInflater().inflate(R.menu.menu_null, menu);
 
+
+        MenuItem cloudUpLoad = menu.add(0, R.id.action_cloud_upload, 10, "备份").setIcon(uploadDrawable);
+        MenuItem cloudDownLoad = menu.add(0, R.id.action_cloud_restore, 20, "同步").setIcon(downloadDrawable);
+
         return super.onCreateOptionsMenu(menu);
+    }
+
+    private void setIconEnable(Menu menu, boolean enable) {
+        try {
+            Class<?> clazz = Class.forName("android.support.v7.view.menu.MenuBuilder");
+            Method m = clazz.getDeclaredMethod("setOptionalIconsVisible", boolean.class);
+            m.setAccessible(true);
+            //MenuBuilder实现Menu接口，创建菜单时，传进来的menu其实就是MenuBuilder对象(java的多态特征)
+            m.invoke(menu, enable);
+
+            //设置默认是
+            Field field = clazz.getDeclaredField("mDefaultShowAsAction");
+            field.setAccessible(true);
+            field.set(menu, SupportMenuItem.SHOW_AS_ACTION_ALWAYS);
+        } catch (Exception e) {
+            Toast.makeText(MainActivity.this, e.toString(), Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -202,6 +238,9 @@ public class MainActivity extends BaseActivity {
                 startActivityForResult(new Intent(this, EditNoteBookActivity.class), REQUEST_CODE_NEW_BOOK);
                 break;
             //The notebook which is clicked.
+            case R.id.action_cloud_upload:
+                syncAllData();
+                break;
             case R.id.action_all_note_book:
                 setDefaultFragment();
                 break;
@@ -229,6 +268,10 @@ public class MainActivity extends BaseActivity {
             mCurrentFragment.onOptionsItemSelected(item);
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void syncAllData() {
+        SyncUtils.syncAllUnSyncNote(this);
     }
 
     public void startNoteBookFragment(long notebookId) {

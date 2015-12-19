@@ -5,13 +5,19 @@ import android.os.Parcelable;
 
 import com.ruffneck.cloudnote.db.DBConstants;
 
-public class ImageAttach extends Attach implements Parcelable{
+public class ImageAttach extends Attach implements Parcelable {
 
     public ImageAttach() {
+        init();
+    }
+
+    public ImageAttach(Parcel in) {
+        super(in);
     }
 
     public ImageAttach(String localURL, int type, long noteId) {
         super(localURL, type, noteId);
+        init();
     }
 
     private void init() {
@@ -30,23 +36,6 @@ public class ImageAttach extends Attach implements Parcelable{
         }
 
     };
-
-    protected ImageAttach(Parcel in) {
-        localURL = in.readString();
-        netURL = in.readString();
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(localURL);
-        dest.writeString(netURL);
-        init();
-    }
 
     @Override
     public String toString() {
