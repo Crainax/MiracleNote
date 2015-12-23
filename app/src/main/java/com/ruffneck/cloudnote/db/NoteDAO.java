@@ -93,7 +93,11 @@ public class NoteDAO {
         note.setHasSync(hasSync);
         setValuesByNote(note, values);
 
-        database.update(DBConstants.Note.TABLE_NAME, values, DBConstants.Note.COLUMN_ID + "=?", new String[]{note.getId() + ""});
+        // update the data depend on the id or objectId.
+        if (!TextUtils.isEmpty(note.getObjectId()))
+            database.update(DBConstants.Note.TABLE_NAME, values, DBConstants.Note.COLUMN_OBJECTID + "=?", new String[]{note.getObjectId()});
+        else
+            database.update(DBConstants.Note.TABLE_NAME, values, DBConstants.Note.COLUMN_ID + "=?", new String[]{note.getId() + ""});
 
         close();
     }
@@ -110,7 +114,21 @@ public class NoteDAO {
         }
 
         close();
-        System.out.println("NoteDAO.exist================false");
+        return false;
+    }
+
+    public boolean exist(String objectId) {
+
+        open();
+        Cursor cursor = database.query(DBConstants.Note.TABLE_NAME, null, DBConstants.Note.COLUMN_OBJECTID + "=?", new String[]{objectId}, null, null, null);
+
+        if (cursor != null) {
+            if (cursor.moveToNext())
+                return true;
+            cursor.close();
+        }
+
+        close();
         return false;
     }
 
@@ -258,4 +276,12 @@ public class NoteDAO {
     }
 
 
+    public void restore(Note note) {
+        if (exist(note.getObjectId())) {
+            update(note, true);
+        } else {
+            insert(note);
+        }
+
+    }
 }

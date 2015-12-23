@@ -21,6 +21,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 DBConstants.Attach.COLUMN_ID + " integer primary key autoincrement," +
                 DBConstants.Attach.COLUMN_LOCAL_URL + " text," +
                 DBConstants.Attach.COLUMN_NOTE + " integer," +
+                DBConstants.Attach.COLUMN_SYNC + " integer," +
+                DBConstants.Attach.COLUMN_OBJECTID + " text default ''," +
                 DBConstants.Attach.COLUMN_TYPE_ID + " integer)");
 
         db.execSQL("create table " +
@@ -107,6 +109,14 @@ public class DBHelper extends SQLiteOpenHelper {
                 db.execSQL("ALTER TABLE " + DBConstants.Note.TABLE_NAME + " ADD COLUMN " +
                         DBConstants.Note.COLUMN_OBJECTID + " text");
                 System.out.println("database version update from 3");
+                break;
+            case 4:
+                db.execSQL("ALTER TABLE " + DBConstants.Attach.TABLE_NAME + " ADD COLUMN " +
+                        DBConstants.Attach.COLUMN_OBJECTID + " default ''");
+                db.execSQL("ALTER TABLE " + DBConstants.Attach.TABLE_NAME + " ADD COLUMN " +
+                        DBConstants.Attach.COLUMN_SYNC + " integer");
+                System.out.println("database version update from 4");
+                break;
         }
     }
 }

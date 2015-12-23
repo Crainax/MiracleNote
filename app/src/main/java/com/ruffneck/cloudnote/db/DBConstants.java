@@ -2,12 +2,12 @@ package com.ruffneck.cloudnote.db;
 
 import android.graphics.Color;
 
-public class DBConstants  {
+public class DBConstants {
 
     /**
      * Notebook table column.
      */
-    public class NoteBook{
+    public class NoteBook {
         public static final String COLUMN_ID = "_id";
         public static final String COLUMN_NAME = "name";
         public static final String COLUMN_COLOR = "color";
@@ -23,12 +23,13 @@ public class DBConstants  {
         public static final long DEFAULT_NOTEBOOK_COLOR = Color.BLUE;
         public static final String RECYCLE_BIN_DETAIL = "存放已经回收的笔记";
         public static final long RECYCLE_BIN_COLOR = Color.GREEN;
+        public static final String MARK = "admin";
     }
 
     /**
      * Note table column.
      */
-    public class Note{
+    public class Note {
         public static final String COLUMN_ID = "_id";
         public static final String COLUMN_TITLE = "title";
         public static final String COLUMN_CONTENT = "content";
@@ -45,7 +46,7 @@ public class DBConstants  {
     /**
      * Type table column.
      */
-    public class Type{
+    public class Type {
         public static final String COLUMN_ID = "_id";
         public static final String COLUMN_TYPE = "type";
         public static final int TYPE_IMAGE = 0x001;
@@ -56,12 +57,14 @@ public class DBConstants  {
     /**
      * Attach table column.
      */
-    public class Attach{
+    public class Attach {
         public static final String COLUMN_ID = "_id";
         public static final String COLUMN_NOTE = "note";
         public static final String COLUMN_TYPE_ID = "type_id";
         public static final String COLUMN_LOCAL_URL = "local_url";
         public static final String TABLE_NAME = "attach";
+        public static final String COLUMN_SYNC = "has_sync";
+        public static final String COLUMN_OBJECTID = "object_id";
     }
 
 }

@@ -29,7 +29,6 @@ public class AllNoteBookFragment extends MainFragment {
 
     @InjectView(R.id.rv_notebook)
     RecyclerView rvNotebook;
-
     private List<NoteBook> noteBookList;
 
     private AllNoteBookAdapter allNoteBookAdapter;
@@ -47,13 +46,26 @@ public class AllNoteBookFragment extends MainFragment {
 
     @Override
     public void onFabClick(FloatingActionButton fab) {
+
+
         getMainActivity().startActivityForResult(new Intent(getMainActivity(), EditNoteBookActivity.class), getMainActivity().REQUEST_CODE_NEW_BOOK);
+
+
+//        AVObject avObject = new AVObject("test");
+//        avObject.put("testFile", avfile);
+//        avObject.saveInBackground(new SaveCallback() {
+//            @Override
+//            public void done(AVException e) {
+//                Toast.makeText(getActivity(), "成功啦>>>", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+
     }
 
     private void initAdapter() {
         noteBookList = NoteBookDAO.getInstance(getActivity()).queryAllNoteBook();
 
-        rvNotebook.setLayoutManager(new StaggeredGridLayoutManager(SPAN_NOTEBOOK,StaggeredGridLayoutManager.VERTICAL));
+        rvNotebook.setLayoutManager(new StaggeredGridLayoutManager(SPAN_NOTEBOOK, StaggeredGridLayoutManager.VERTICAL));
 //        rvNotebook.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
         allNoteBookAdapter = new AllNoteBookAdapter(noteBookList);
         rvNotebook.setAdapter(allNoteBookAdapter);

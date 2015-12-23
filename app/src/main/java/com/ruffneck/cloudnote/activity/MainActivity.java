@@ -30,7 +30,8 @@ import com.ruffneck.cloudnote.activity.fragment.NoteBookFragment;
 import com.ruffneck.cloudnote.activity.fragment.RecycleFragment;
 import com.ruffneck.cloudnote.db.DBConstants;
 import com.ruffneck.cloudnote.models.note.NoteBook;
-import com.ruffneck.cloudnote.utils.SyncUtils;
+import com.ruffneck.cloudnote.service.CloudIntentService;
+import com.ruffneck.cloudnote.utils.CloudUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -241,6 +242,9 @@ public class MainActivity extends BaseActivity {
             case R.id.action_cloud_upload:
                 syncAllData();
                 break;
+            case R.id.action_cloud_restore:
+                restoreAllData();
+                break;
             case R.id.action_all_note_book:
                 setDefaultFragment();
                 break;
@@ -270,8 +274,15 @@ public class MainActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private void restoreAllData() {
+        CloudIntentService.restoreNote(this);
+        CloudIntentService.restoreNoteBook(this);
+        CloudIntentService.restoreAttach(this);
+        Toast.makeText(MainActivity.this, "开始同步数据...", Toast.LENGTH_SHORT).show();
+    }
+
     private void syncAllData() {
-        SyncUtils.syncAllUnSyncNote(this);
+        CloudUtils.syncAllUnSyncData(this);
     }
 
     public void startNoteBookFragment(long notebookId) {

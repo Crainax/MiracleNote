@@ -32,7 +32,6 @@ import com.ruffneck.cloudnote.models.note.Note;
 import com.ruffneck.cloudnote.models.note.NoteBook;
 import com.ruffneck.cloudnote.utils.AlertDialogUtils;
 import com.ruffneck.cloudnote.utils.ColorsUtils;
-import com.ruffneck.cloudnote.utils.SnackBarUtils;
 
 import java.util.List;
 
@@ -235,7 +234,7 @@ public class NoteBookFragment extends MainFragment {
                             noteDAO.updateNoteBookById(mChooseNote, noteBook.getId());
 //                            SnackBarUtils.showSnackBar(getFab(), "移动成功!", 5000, "OK");
 
-                            Snackbar.make(getFab(), "删除成功,所有笔记已经移动到回收站.", Snackbar.LENGTH_LONG).show();
+                            Snackbar.make(getFab(), "移动成功!", Snackbar.LENGTH_LONG).show();
                             removeNoteFromList();
                         }
                     }

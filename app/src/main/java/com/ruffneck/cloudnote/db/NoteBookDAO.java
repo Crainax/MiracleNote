@@ -98,6 +98,22 @@ public class NoteBookDAO {
         return false;
     }
 
+    public boolean exist(String objectId) {
+
+        open();
+        Cursor cursor = database.query(DBConstants.NoteBook.TABLE_NAME, null, DBConstants.NoteBook.COLUMN_OBJECTID + "=?", new String[]{objectId}, null, null, null);
+
+        if (cursor != null) {
+            if (cursor.moveToNext())
+                return true;
+            cursor.close();
+        }
+
+        close();
+        System.out.println("NoteBookDAO.exist================false");
+        return false;
+    }
+
     /**
      * First judge that if database have the data , insert it if none ,else update.
      *
@@ -236,5 +252,15 @@ public class NoteBookDAO {
         close();
 
         return noteBookList;
+    }
+
+    public void restore(NoteBook notebook) {
+        if (notebook.getId() == DBConstants.NoteBook.ID_DEFAULT_NOTEBOOK ||
+                notebook.getId() == DBConstants.NoteBook.ID_RECYCLE_BIN ||
+                exist(notebook.getObjectId()))
+            update(notebook, true);
+        else {
+            insert(notebook);
+        }
     }
 }

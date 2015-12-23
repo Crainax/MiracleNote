@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 
 import com.avos.avoscloud.AVOSCloud;
+import com.avos.avoscloud.AVObject;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.cache.memory.impl.WeakMemoryCache;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -15,6 +16,8 @@ import com.ruffneck.cloudnote.activity.AlarmActivity;
 import com.ruffneck.cloudnote.db.NoteDAO;
 import com.ruffneck.cloudnote.info.Constant;
 import com.ruffneck.cloudnote.models.note.Note;
+import com.ruffneck.cloudnote.models.note.attach.Attach;
+import com.ruffneck.cloudnote.models.note.attach.ImageAttach;
 import com.ruffneck.cloudnote.utils.DateUtils;
 
 import java.util.List;
@@ -33,6 +36,8 @@ public class CustomApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
+        AVObject.registerSubclass(Attach.class);
+        AVObject.registerSubclass(ImageAttach.class);
         AVOSCloud.initialize(this, Constant.LEANCLOUD_ID, Constant.LEANCLOUD_KEY);
         mCustomApplication = this;
 

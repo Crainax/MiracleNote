@@ -1,73 +1,76 @@
 package com.ruffneck.cloudnote.models.note.attach;
 
 import android.os.Parcel;
-import android.os.Parcelable;
 
-public abstract class Attach implements Parcelable {
+import com.avos.avoscloud.AVClassName;
+import com.avos.avoscloud.AVObject;
 
-    public String localURL;
-    public String netURL;
-    protected int type;
-    private long id;
-    private long noteId;
+@AVClassName("Attach")
+public class Attach extends AVObject {
+
+
+    public static final String KEY_TYPE = "type";
+    public static final String KEY_NOTE_ID = "noteId";
+    public static final String KEY_ID = "attachId";
+    private static final String KEY_LOCAL_URL = "localUrl";
+    private static final String KEY_HAS_SYNC = "hasSync";
 
     public Attach() {
-
     }
 
+
     public Attach(String localURL, int type, long noteId) {
-        this.localURL = localURL;
-        this.type = type;
-        this.noteId = noteId;
+        super(Attach.class.getSimpleName());
+//        System.out.println(Attach.class.getName());
+        setLocalURL(localURL);
+        setType(type);
+        setNoteId(noteId);
     }
 
     public long getNoteId() {
-        return noteId;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public int getType() {
-        return type;
-    }
-
-    public void setType(int type) {
-        this.type = type;
-    }
-
-    public void setLocalURL(String localURL) {
-        this.localURL = localURL;
+        return getLong(KEY_NOTE_ID);
     }
 
     public void setNoteId(long noteId) {
-        this.noteId = noteId;
+        put(KEY_NOTE_ID, noteId);
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(localURL);
-        dest.writeString(netURL);
-        dest.writeInt(type);
-        dest.writeLong(id);
-        dest.writeLong(noteId);
+    public long getId() {
+        return getLong(KEY_ID);
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
+    public void setId(long id) {
+        put(KEY_ID, id, false);
     }
 
-    protected Attach(Parcel in) {
-        localURL = in.readString();
-        netURL = in.readString();
-        type = in.readInt();
-        id = in.readLong();
-        noteId = in.readLong();
+    public int getType() {
+        return getInt(KEY_TYPE);
     }
+
+    public void setType(int type) {
+        put(KEY_TYPE, type);
+    }
+
+    public void setLocalURL(String localURL) {
+        put(KEY_LOCAL_URL, localURL);
+    }
+
+    public String getLocalURL() {
+        return getString(KEY_LOCAL_URL);
+    }
+
+    public boolean isHasSync() {
+        return getBoolean(KEY_HAS_SYNC);
+    }
+
+    public void setHasSync(boolean hasSync) {
+        put(KEY_HAS_SYNC, hasSync, false);
+    }
+
+    public Attach(Parcel in) {
+        super(in);
+    }
+
+    public static final Creator CREATOR = AVObjectCreator.instance;
+
 }

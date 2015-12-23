@@ -250,20 +250,20 @@ public class EditNoteActivity extends BaseActivity {
         });
         attachAdapter.setOnItemClickListener(new AttachAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(View view, Attach attach) {
-                Toast.makeText(EditNoteActivity.this, attach.localURL, Toast.LENGTH_SHORT).show();
+            public void onItemClick(View view, int postion) {
+                Toast.makeText(EditNoteActivity.this, attachList.get(postion).getLocalURL(), Toast.LENGTH_SHORT).show();
+                System.out.println(attachList.get(postion).getLocalURL());
             }
         });
 
         attachAdapter.setOnItemLongClickListener(new AttachAdapter.OnItemLongClickListener() {
             @Override
-            public void onItemLongClick(View view, final Attach attach) {
+            public void onItemLongClick(View view, final int position) {
                 AlertDialogUtils.show(EditNoteActivity.this, "注意", "确认要删除该附件吗?", "确认", "取消", new AlertDialogUtils.OkCallBack() {
                     @Override
                     public void onOkClick(DialogInterface dialog, int which) {
 
-                        int index = attachList.indexOf(attach);
-                        attachList.remove(index);
+                        Attach attach = attachList.remove(position);
                         attachAdapter.notifyDataSetChanged();
                         attachDAO.delete(attach);
 

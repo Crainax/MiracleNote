@@ -67,7 +67,7 @@ public class NoteAdapter extends ImageLoaderAdapter<NoteAdapter.ViewHolder> {
         Attach attach = AttachDAO.getInstance(holder.itemView.getContext()).queryFirstByNoteId(note.getId());
         if (attach != null) {
             holder.iv.setVisibility(View.VISIBLE);
-            loader.displayImage("file://" + attach.localURL, holder.iv, options);
+            loader.displayImage("file://" + attach.getLocalURL(), holder.iv, options);
         } else {
             holder.iv.setImageBitmap(null);
             holder.iv.setVisibility(View.INVISIBLE);

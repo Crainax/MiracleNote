@@ -20,11 +20,11 @@ public class AttachAdapter extends ImageLoaderAdapter<AttachAdapter.ViewHolder> 
     private OnItemLongClickListener onItemLongClickListener;
 
     public interface OnItemClickListener {
-        void onItemClick(View view, Attach attach);
+        void onItemClick(View view, int postion);
     }
 
     public interface OnItemLongClickListener {
-        void onItemLongClick(View view, Attach attach);
+        void onItemLongClick(View view, int position);
     }
 
     public interface OnMoreClickListener {
@@ -75,7 +75,7 @@ public class AttachAdapter extends ImageLoaderAdapter<AttachAdapter.ViewHolder> 
 //                    .memoryCache(new LruCache(maxSize))
 //                    .build();
 
-            loader.displayImage("file://" + attachList.get(position).localURL, holder.imageView, options);
+            loader.displayImage("file://" + attachList.get(position).getLocalURL(), holder.imageView, options);
         }
 
         bindClickListener(holder.itemView, position);
@@ -110,14 +110,14 @@ public class AttachAdapter extends ImageLoaderAdapter<AttachAdapter.ViewHolder> 
                 @Override
                 public void onClick(View v) {
                     if (onItemClickListener != null)
-                        onItemClickListener.onItemClick(v, attachList.get(position));
+                        onItemClickListener.onItemClick(v, position);
                 }
             });
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
                     if (onItemLongClickListener != null)
-                        onItemLongClickListener.onItemLongClick(v, attachList.get(position));
+                        onItemLongClickListener.onItemLongClick(v, position);
                     return true;
                 }
             });
