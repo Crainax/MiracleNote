@@ -1,12 +1,15 @@
 package com.ruffneck.cloudnote.activity;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.transition.Slide;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 
 import com.alibaba.fastjson.JSON;
@@ -42,6 +45,7 @@ public class SigninActivity extends AppCompatActivity {
 
     /**
      * Before sign in , check all the edit text is correct.
+     *
      * @param view
      */
     @OnClick(R.id.fab_signin)
@@ -66,12 +70,12 @@ public class SigninActivity extends AppCompatActivity {
             user.signUpInBackground(new SignUpCallback() {
                 @Override
                 public void done(AVException e) {
-                    if(e == null){
+                    if (e == null) {
                         Intent intent = new Intent();
-                        intent.putExtra("username",username);
+                        intent.putExtra("username", username);
                         setResult(SigninActivity.RESULT_OK, intent);
                         finish();
-                    }else{
+                    } else {
 
                         JSONObject jsonObject = JSON.parseObject(e.getMessage());
                         String error = jsonObject.getString("error");
@@ -88,11 +92,20 @@ public class SigninActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+            getWindow().setExitTransition(new Slide());
+            getWindow().setEnterTransition(new Slide());
+            getWindow().setReturnTransition(new Slide());
+            getWindow().setReenterTransition(new Slide());
+        }
+
         super.onCreate(savedInstanceState);
         fullScreen();
         setContentView(R.layout.activity_signin);
         ButterKnife.inject(this);
-        AVOSCloud.initialize(this, Constant.LEANCLOUD_ID,Constant.LEANCLOUD_KEY);
+        AVOSCloud.initialize(this, Constant.LEANCLOUD_ID, Constant.LEANCLOUD_KEY);
         initListener();
     }
 

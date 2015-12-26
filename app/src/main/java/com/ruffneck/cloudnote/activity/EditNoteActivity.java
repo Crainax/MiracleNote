@@ -174,7 +174,7 @@ public class EditNoteActivity extends BaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Intent intent = null;
+        Intent intent;
         switch (item.getItemId()) {
             case android.R.id.home:
                 AlertDialogUtils.show(EditNoteActivity.this, "确认", "确认离开吗?", "确认", "取消", new AlertDialogUtils.OkCallBack() {
@@ -305,7 +305,7 @@ public class EditNoteActivity extends BaseActivity {
 
                         while (cursor.moveToNext()) {
                             String pathUri = cursor.getString(0);
-//                    System.out.println("pathUri = " + pathUri);
+                    System.out.println("pathUri = " + pathUri);
                             Attach newAttach = new ImageAttach(pathUri, DBConstants.Type.TYPE_IMAGE, note.getId());
                             insertAttach(newAttach);
                         }

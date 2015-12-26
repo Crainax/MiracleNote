@@ -9,14 +9,15 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.v4.internal.view.SupportMenuItem;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
+import android.view.Window;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,9 +33,8 @@ import com.ruffneck.cloudnote.db.DBConstants;
 import com.ruffneck.cloudnote.models.note.NoteBook;
 import com.ruffneck.cloudnote.service.CloudIntentService;
 import com.ruffneck.cloudnote.utils.CloudUtils;
+import com.ruffneck.cloudnote.utils.ReflectUtils;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.List;
 
 import butterknife.ButterKnife;
@@ -77,27 +77,41 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        initTransition();
         super.onCreate(savedInstanceState);
 
         mPref = getSharedPreferences("config", MODE_PRIVATE);
-
         ButterKnife.inject(this);
+
         initDrawer();
-
-
         setDefaultFragment();
+    }
+
+    private void initTransition() {
+        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
     }
 
     private void initUserInfo() {
         AVUser avUser = AVUser.getCurrentUser();
+
+        CircleImageView circlePortrait = (CircleImageView) nv.getHeaderView(0).findViewById(R.id.iv_portrait);
+
         if (avUser != null) {
             View headerView = nv.getHeaderView(0);
             TextView tvUserEmail = (TextView) headerView.findViewById(R.id.tv_user_email);
             TextView tvUserName = (TextView) headerView.findViewById(R.id.tv_user_name);
-            CircleImageView circlePortrait = (CircleImageView) headerView.findViewById(R.id.iv_portrait);
             tvUserEmail.setText(avUser.getEmail());
             tvUserName.setText(mPref.getString("nickname", avUser.getUsername()));
-            loader.displayImage(mPref.getString("figureUrl", "http://www.sdfsdfafdc.xcx"), circlePortrait);
+
+        }
+
+        String figureUrl = mPref.getString("figureUrl", null);
+        if (!TextUtils.isEmpty(figureUrl)) {
+            loader.displayImage(figureUrl, circlePortrait);
+            System.out.println("MainActivity.initUserInfo111");
+        } else {
+            loader.displayImage("drawable://" + R.drawable.placeholder_avatar_320, circlePortrait);
+            System.out.println("MainActivity.initUserInfo222");
         }
     }
 
@@ -140,14 +154,14 @@ public class MainActivity extends BaseActivity {
             refreshNotebookSubMenu();
         }
 
-
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
+        //通过反射的方法设置可见性.
+        ReflectUtils.setMenuIconVisibility(menu, true);
 
-        setIconEnable(menu, true);
         Drawable uploadDrawable = getDrawable(R.drawable.ic_cloud_upload_24dp);
         Drawable downloadDrawable = getDrawable(R.drawable.ic_cloud_download_24dp);
         if (mCurrentFragment != null && mCurrentFragment.optionsMenu() != 0) {
@@ -173,24 +187,6 @@ public class MainActivity extends BaseActivity {
         MenuItem cloudDownLoad = menu.add(0, R.id.action_cloud_restore, 20, "同步").setIcon(downloadDrawable);
 
         return super.onCreateOptionsMenu(menu);
-    }
-
-    private void setIconEnable(Menu menu, boolean enable) {
-        try {
-            Class<?> clazz = Class.forName("android.support.v7.view.menu.MenuBuilder");
-            Method m = clazz.getDeclaredMethod("setOptionalIconsVisible", boolean.class);
-            m.setAccessible(true);
-            //MenuBuilder实现Menu接口，创建菜单时，传进来的menu其实就是MenuBuilder对象(java的多态特征)
-            m.invoke(menu, enable);
-
-            //设置默认是
-            Field field = clazz.getDeclaredField("mDefaultShowAsAction");
-            field.setAccessible(true);
-            field.set(menu, SupportMenuItem.SHOW_AS_ACTION_ALWAYS);
-        } catch (Exception e) {
-            Toast.makeText(MainActivity.this, e.toString(), Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -229,11 +225,8 @@ public class MainActivity extends BaseActivity {
 
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-
         switch (item.getItemId()) {
             case R.id.menu_add_new_notebook:
                 startActivityForResult(new Intent(this, EditNoteBookActivity.class), REQUEST_CODE_NEW_BOOK);

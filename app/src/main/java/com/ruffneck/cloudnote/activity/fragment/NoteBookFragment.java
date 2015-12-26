@@ -10,7 +10,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,7 +30,6 @@ import com.ruffneck.cloudnote.dialog.NoteMover;
 import com.ruffneck.cloudnote.models.note.Note;
 import com.ruffneck.cloudnote.models.note.NoteBook;
 import com.ruffneck.cloudnote.utils.AlertDialogUtils;
-import com.ruffneck.cloudnote.utils.ColorsUtils;
 
 import java.util.List;
 
@@ -138,25 +136,6 @@ public class NoteBookFragment extends MainFragment {
 
 
     @Override
-    public void initToolbar(Toolbar toolbar) {
-
-        if (noteBook != null) {
-
-            int color = (int) noteBook.getColor();
-            int reverseColor = ColorsUtils.getReverseColor(color);
-
-            toolbar.setBackgroundColor(color);
-            toolbar.setTitle(noteBook.getName());
-            toolbar.setTitleTextColor(reverseColor);
-            getMainActivity().getWindow().setStatusBarColor(color);
-
-//            toolbar.setSubtitleTextColor(reverseColor);
-//            toolbar.setSubtitle(noteBook.getDetail());
-
-        }
-    }
-
-    @Override
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.reset(this);
@@ -191,8 +170,13 @@ public class NoteBookFragment extends MainFragment {
     }
 
     @Override
-    public int optionsMenuItemColor() {
-        return ColorsUtils.getReverseColor((int) noteBook.getColor());
+    public int toolbarColor() {
+        return (int) (noteBook.getColor());
+    }
+
+    @Override
+    protected String toolbarTitle() {
+        return noteBook.getName();
     }
 
     @Override

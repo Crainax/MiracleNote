@@ -1,14 +1,20 @@
 package com.ruffneck.cloudnote.activity;
 
+import android.annotation.TargetApi;
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.transition.Slide;
 import android.util.DisplayMetrics;
+import android.util.Pair;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -53,10 +59,15 @@ public class LoginActivity extends AppCompatActivity implements IUiListener {
 
     private SharedPreferences mPref;
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @OnClick(R.id.bt_signin)
     void signIn(View bt) {
         Intent intent = new Intent(this, SigninActivity.class);
-        startActivityForResult(intent, REQUEST_SIGNIN);
+        startActivityForResult(intent, REQUEST_SIGNIN, ActivityOptions
+                .makeSceneTransitionAnimation(this
+                        , Pair.create(viewShelter, "view_shelter")
+                        , Pair.create(bt, "sign_in")
+                ).toBundle());
     }
 
     @OnClick(R.id.bt_login)
@@ -117,6 +128,15 @@ public class LoginActivity extends AppCompatActivity implements IUiListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+            getWindow().setExitTransition(new Slide());
+            getWindow().setEnterTransition(new Slide());
+            getWindow().setReturnTransition(new Slide());
+            getWindow().setReenterTransition(new Slide());
+        }
+
         super.onCreate(savedInstanceState);
         setFullScreen();
         setContentView(R.layout.activity_login);
@@ -130,6 +150,9 @@ public class LoginActivity extends AppCompatActivity implements IUiListener {
         if (currentUser != null) {
             loginSucceed();
         }
+
+        showEnterAnim();
+
     }
 
     @Override
@@ -159,22 +182,10 @@ public class LoginActivity extends AppCompatActivity implements IUiListener {
     }
 
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        showEnterAnim();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        showExitAnim();
-    }
-
     /**
      * Show the view's animation when exit the animation.
      */
-    private void showExitAnim() {
+/*    private void showExitAnim() {
 
         final int DURATION = 400;
 
@@ -184,7 +195,7 @@ public class LoginActivity extends AppCompatActivity implements IUiListener {
 
         viewDivider.animate().scaleX(0).setDuration(DURATION).setStartDelay(DURATION).start();
 
-    }
+    }*/
 
     /**
      * Show the view's animation when enter the activity.

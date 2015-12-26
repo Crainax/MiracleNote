@@ -182,9 +182,9 @@ public class Note implements Parcelable {
         dest.writeString(content);
         dest.writeLong(id);
         dest.writeLong(notebook);
-        dest.writeLong(create.getTime());
-        dest.writeLong(modify.getTime());
-        dest.writeLong(alarm.getTime());
+        dest.writeLong(create != null ? create.getTime() : 0);
+        dest.writeLong(modify != null ? modify.getTime() : 0);
+        dest.writeLong(alarm != null ? alarm.getTime() : 0);
         dest.writeInt(hasSync ? 1 : 0);
         dest.writeLong(preNotebook);
         dest.writeParcelable(pendingIntent, PARCELABLE_WRITE_RETURN_VALUE);

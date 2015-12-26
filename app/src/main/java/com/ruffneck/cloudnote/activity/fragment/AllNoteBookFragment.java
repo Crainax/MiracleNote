@@ -11,6 +11,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 
 import com.ruffneck.cloudnote.R;
 import com.ruffneck.cloudnote.activity.EditNoteBookActivity;
@@ -76,6 +78,10 @@ public class AllNoteBookFragment extends MainFragment {
                 getMainActivity().startNoteBookFragment((int) noteBook.getId());
             }
         });
+
+        //The default animation.
+        LayoutAnimationController lac = AnimationUtils.loadLayoutAnimation(getActivity(), R.anim.layout_all_notebook);
+        rvNotebook.setLayoutAnimation(lac);
     }
 
     @Override
