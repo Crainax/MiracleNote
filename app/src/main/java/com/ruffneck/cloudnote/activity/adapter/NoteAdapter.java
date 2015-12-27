@@ -13,6 +13,7 @@ import com.ruffneck.cloudnote.models.note.Note;
 import com.ruffneck.cloudnote.models.note.attach.Attach;
 import com.ruffneck.cloudnote.utils.DateUtils;
 import com.ruffneck.cloudnote.utils.FormatUtils;
+import com.ruffneck.cloudnote.utils.HtmlRegexUtils;
 
 import java.util.List;
 
@@ -57,7 +58,7 @@ public class NoteAdapter extends ImageLoaderAdapter<NoteAdapter.ViewHolder> {
         Note note = noteList.get(position);
 
         holder.tvTitle.setText(note.getTitle());
-        holder.tvContent.setText(note.getContent());
+        holder.tvContent.setText(HtmlRegexUtils.filterHtml(note.getContent()));
         holder.tvUpdate.setText("最后更新:" + FormatUtils.formatDate(note.getModify()));
         if (note.getAlarm().compareTo(DateUtils.getCurrentDate()) > 0) {
             holder.ivAlarm.setVisibility(View.VISIBLE);

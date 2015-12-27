@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/action_undo"
+                style="@style/EditorHandlerToggle"
+                android:src="@drawable/ic_undo_24dp" />
+
+            <ImageButton
+                android:id="@+id/action_redo"
+                style="@style/EditorHandlerToggle"
+                android:src="@drawable/ic_redo_24dp" />
+
+            <ImageButton
+                android:id="@+id/action_bold"
+                style="@style/EditorHandlerToggle"
+                android:src="@drawable/ic_format_bold_24dp" />
+
+            <ImageButton
+                android:id="@+id/action_italic"
+                style="@style/EditorHandlerToggle"
+                android:src="@drawable/ic_format_italic_24dp" />
+
+            <ImageButton
+                android:id="@+id/action_subscript"
+                style="@style/EditorHandlerToggle"
+                android:src="@drawable/subscript"
+                android:tint="@android:color/black" />
+
+            <ImageButton
+                android:id="@+id/action_superscript"
+                style="@style/EditorHandlerToggle"
+                android:src="@drawable/superscript"
+                android:tint="@android:color/black" />
+
+            <ImageButton
+                android:id="@+id/action_strikethrough"
+                style="@style/EditorHandlerToggle"
+                android:src="@drawable/ic_format_strikethrough_24dp" />
+
+            <ImageButton
+                android:id="@+id/action_underline"
+                style="@style/EditorHandlerToggle"
+                android:src="@drawable/ic_format_underline_24dp" />
+
+            <ImageButton
+                android:id="@+id/action_heading1"
+                style="@style/EditorHandlerToggle"
+                android:src="@drawable/h1"
+                android:tint="@android:color/black" />
+
+            <ImageButton
+                android:id="@+id/action_heading2"
+                style="@style/EditorHandlerToggle"
+                android:src="@drawable/h2"
+                android:tint="@android:color/black" />
+
+            <ImageButton
+                android:id="@+id/action_heading3"
+                style="@style/EditorHandlerToggle"
+                android:src="@drawable/h3"
+                android:tint="@android:color/black" />
+
+            <ImageButton
+                android:id="@+id/action_heading4"
+                style="@style/EditorHandlerToggle"
+                android:src="@drawable/h4"
+                android:tint="@android:color/black" />
+
+            <ImageButton
+                android:id="@+id/action_heading5"
+                style="@style/EditorHandlerToggle"
+                android:src="@drawable/h5"
+                android:tint="@android:color/black" />
+
+            <ImageButton
+                android:id="@+id/action_heading6"
+                style="@style/EditorHandlerToggle"
+                android:src="@drawable/h6"
+                android:tint="@android:color/black" />
+
+            <ImageButton
+                android:id="@+id/action_txt_color"
+                style="@style/EditorHandlerToggle"
+                android:src="@drawable/ic_format_color_text_24dp" />
+
+            <ImageButton
+                android:id="@+id/action_bg_color"
+                style="@style/EditorHandlerToggle"
+                android:src="@drawable/ic_format_color_fill_24dp" />
+
+
+            <ImageButton
+                android:id="@+id/action_indent"
+                style="@style/EditorHandlerToggle"
+                android:src="@drawable/ic_format_indent_decrease_24dp" />
+
+            <ImageButton
+                android:id="@+id/action_outdent"
+                style="@style/EditorHandlerToggle"
+                android:src="@drawable/ic_format_indent_increase_24dp" />
+
+            <ImageButton
+                android:id="@+id/action_align_left"
+                style="@style/EditorHandlerToggle"
+                android:src="@drawable/ic_format_align_left_24dp" />
+
+            <ImageButton
+                android:id="@+id/action_align_center"
+                style="@style/EditorHandlerToggle"
+                android:src="@drawable/ic_format_align_center_24dp" />
+
+            <ImageButton
+                android:id="@+id/action_align_right"
+                style="@style/EditorHandlerToggle"
+                android:src="@drawable/ic_format_align_right_24dp" />
+
+            <ImageButton
+                android:id="@+id/action_blockquote"
+                style="@style/EditorHandlerToggle"
+                android:src="@drawable/blockquote"
+                android:tint="@android:color/black" />
+
+            <ImageButton
+                android:id="@+id/action_insert_image"
+                style="@style/EditorHandlerToggle"
+                android:src="@drawable/ic_insert_photo_24dp" />
+
+            <ImageButton
+                android:id="@+id/action_insert_link"
+                style="@style/EditorHandlerToggle"
+                android:src="@drawable/ic_insert_link_24dp" />
+
+            <ImageButton
+                android:id="@+id/action_insert_checkbox"
+                style="@style/EditorHandlerToggle"
+                android:src="@drawable/ic_check_box_24dp" />
+
+        </LinearLayout>
+    </HorizontalScrollView>
+</RelativeLayout>

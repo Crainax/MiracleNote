@@ -165,6 +165,11 @@ RE.insertImage = function(url, alt) {
     RE.insertHTML(html);
 }
 
+RE.insertSpecImage = function(url,alt,width){
+    var html = '<img src="' + url + '" alt="' + alt + '" width='+ width + '" />';
+    RE.insertHTML(html);
+}
+
 RE.insertHTML = function(html) {
     RE.restorerange();
     document.execCommand('insertHTML', false, html);

@@ -1,6 +1,5 @@
 package com.ruffneck.cloudnote.activity;
 
-import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
@@ -12,10 +11,15 @@ import android.provider.MediaStore;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.transition.Explode;
+import android.transition.Fade;
+import android.transition.Slide;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
@@ -33,6 +37,9 @@ import com.ruffneck.cloudnote.models.note.attach.ImageAttach;
 import com.ruffneck.cloudnote.utils.AlertDialogUtils;
 import com.ruffneck.cloudnote.utils.DateUtils;
 import com.ruffneck.cloudnote.utils.FormatUtils;
+import com.ruffneck.cloudnote.utils.PixelUtil;
+import com.ruffneck.cloudnote.view.NoteRichEditor;
+import com.ruffneck.cloudnote.view.NoteRichEditorHandler;
 
 import java.net.URI;
 import java.util.Calendar;
@@ -49,12 +56,12 @@ public class EditNoteActivity extends BaseActivity {
 
     private static final int REQUEST_IMAGE = 0x000001;
     private static final int REQUEST_DOODLE = 0x000002;
-
+    private static final int REQUEST_EDITOR_IMAGE = 0x000003;
 
     @InjectView(R.id.til_title)
     TextInputLayout tilTitle;
-    @InjectView(R.id.til_content)
-    TextInputLayout tilContent;
+    @InjectView(R.id.richEditor)
+    NoteRichEditor richEditor;
     @InjectView(R.id.iv_alarm)
     ImageView ivAlarm;
     @InjectView(R.id.tv_alarm)
@@ -65,6 +72,9 @@ public class EditNoteActivity extends BaseActivity {
     TextView tvNoteCreate;
     @InjectView(R.id.tv_note_modify)
     TextView tvNoteModify;
+    @InjectView(R.id.editorHandler)
+    NoteRichEditorHandler mEditorHandler;
+
 
     @OnClick(R.id.group_alarm)
     void setAlarmDate(View view) {
@@ -75,7 +85,6 @@ public class EditNoteActivity extends BaseActivity {
         } else {
             calendar.setTime(note.getAlarm());
         }
-
 
 //        calendar.add(Calendar.HOUR, 1);
         //used to test , add 10 second.
@@ -101,9 +110,7 @@ public class EditNoteActivity extends BaseActivity {
             }
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
 
-
     }
-
 
     @OnLongClick(R.id.group_alarm)
     boolean cancelAlarmDate(View view) {
@@ -112,21 +119,34 @@ public class EditNoteActivity extends BaseActivity {
         return true;
     }
 
-
     private Note note = null;
-
     private List<Attach> attachList;
     private AttachAdapter attachAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        requestWindowFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+        getWindow().setEnterTransition(new Explode());
+        getWindow().setEnterTransition(new Slide());
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
 
+        initEditorHandler();
         initNoteInfo();
-
         initRecyclerViewAdapter();
         updateAlarmView();
+    }
+
+    private void initEditorHandler() {
+
+        mEditorHandler.setRichEditor(richEditor);
+        mEditorHandler.setOnImageClickListener(new NoteRichEditorHandler.OnImageClickListener() {
+            @Override
+            public void onImageClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, REQUEST_EDITOR_IMAGE);
+            }
+        });
     }
 
     private void initNoteInfo() {
@@ -146,12 +166,12 @@ public class EditNoteActivity extends BaseActivity {
             note.setNotebook(intent.getLongExtra(DBConstants.Note.COLUMN_NOTEBOOK, 1));
         } else {
             tilTitle.getEditText().setText(note.getTitle());
-            tilContent.getEditText().setText(note.getContent());
+            richEditor.setHtml(note.getContent());
 
             //Initialize the text view of the date : create and modify.
             tvNoteCreate.setText("创建于:" + FormatUtils.formatDate(note.getCreate()));
             tvNoteModify.setText("修改于:" + FormatUtils.formatDate(note.getModify()));
-
+            System.out.println(richEditor.getHtml());
         }
 
         attachList = attachDAO.queryByNoteId(note.getId());
@@ -212,7 +232,7 @@ public class EditNoteActivity extends BaseActivity {
 
     private void saveNote() {
         note.setTitle(tilTitle.getEditText().getText().toString());
-        note.setContent(tilContent.getEditText().getText().toString());
+        note.setContent(richEditor.getHtml());
         if (note.getCreate() == null)
             note.setCreate(new Date());
         note.setModify(new Date());
@@ -294,40 +314,45 @@ public class EditNoteActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (resultCode == RESULT_OK) {
+            if (data == null)
+                return;
             switch (requestCode) {
                 case REQUEST_IMAGE:
-                    if (data == null)
-                        return;
-
-                    Uri queryUri = data.getData();
-                    Cursor cursor = getContentResolver().query(queryUri, new String[]{MediaStore.Images.Media.DATA}, null, null, null);
-                    if (cursor != null) {
-
-                        while (cursor.moveToNext()) {
-                            String pathUri = cursor.getString(0);
-                    System.out.println("pathUri = " + pathUri);
-                            Attach newAttach = new ImageAttach(pathUri, DBConstants.Type.TYPE_IMAGE, note.getId());
-                            insertAttach(newAttach);
-                        }
-
-                        cursor.close();
+                    String pathUri = getPathUrl(data);
+                    if (pathUri != null) {
+                        Attach newAttach = new ImageAttach(pathUri, DBConstants.Type.TYPE_IMAGE, note.getId());
+                        insertAttach(newAttach);
                     }
                     break;
                 case REQUEST_DOODLE:
-                    if (data == null)
-                        return;
-
                     URI uri = (URI) data.getSerializableExtra("uri");
                     Attach newAttach = new ImageAttach(uri.getPath(), DBConstants.Type.TYPE_IMAGE, note.getId());
                     insertAttach(newAttach);
-
-                    AlarmManager alarmManager;
-
+                    break;
+                case REQUEST_EDITOR_IMAGE:
+                    String imgUrl = getPathUrl(data);
+                    if (imgUrl != null) {
+                        mEditorHandler.insertImage("file://", imgUrl, "图片", PixelUtil.px2dp(mEditorHandler.getWidth()) - 30);
+                    }
                     break;
             }
         }
 
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private String getPathUrl(Intent data) {
+        String pathUri = null;
+        Uri queryUri = data.getData();
+        Cursor cursor = getContentResolver().query(queryUri, new String[]{MediaStore.Images.Media.DATA}, null, null, null);
+        if (cursor != null) {
+
+            while (cursor.moveToNext()) {
+                pathUri = cursor.getString(0);
+            }
+            cursor.close();
+        }
+        return pathUri;
     }
 
     private void insertAttach(Attach attach) {

@@ -303,7 +303,7 @@ public class CloudIntentService extends IntentService {
                     notebook.setId(DBConstants.NoteBook.ID_RECYCLE_BIN);
 
                 notebook.setName(avObject.getString(DBConstants.NoteBook.COLUMN_NAME));
-                notebook.setDetail(avObject.getString(DBConstants.NoteBook.DEFAULT_NOTEBOOK_DETAIL));
+                notebook.setDetail(avObject.getString(DBConstants.NoteBook.COLUMN_DETAIL));
                 notebook.setColor(avObject.getLong(DBConstants.NoteBook.COLUMN_COLOR));
                 notebook.setObjectId(avObject.getObjectId());
                 NoteBookDAO.getInstance(this).restore(notebook);
@@ -396,7 +396,7 @@ public class CloudIntentService extends IntentService {
         taskCount = 0;
         completeCount = 0;
         mNM.cancel(NOTIFY_ID);
-        Toast.makeText(CloudIntentService.this, "完成备份!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(CloudIntentService.this, "完成云端操作!", Toast.LENGTH_SHORT).show();
     }
 
 

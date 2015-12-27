@@ -13,6 +13,7 @@
         <item name="android:windowTranslucentStatus">true</item>
     </style>
 
+
     <style name="DividerTheme">
         <item name="android:background">@color/colorDividerWhite</item>
     </style>
@@ -33,11 +34,20 @@
         <item name="android:layout_marginRight">40.0dip</item>
     </style>
 
+
     <style name="ButtonTextStyle">
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">#fff</item>
     </style>
 
+    <style name="EditorHandlerToggle">
+        <item name="android:layout_width">24dp</item>
+        <item name="android:layout_height">24dp</item>
+        <item name="android:background">@null</item>
+        <item name="android:contentDescription">@null</item>
+        <item name="android:scaleType">centerInside</item>
+        <item name="android:layout_margin">5dp</item>
+    </style>
 
     <color name="ControlNormal">#fff</color>
 </resources>

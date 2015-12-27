@@ -1,5 +1,6 @@
 package com.ruffneck.cloudnote.activity;
 
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import com.ruffneck.cloudnote.R;
 import com.ruffneck.cloudnote.models.note.Note;
 import com.ruffneck.cloudnote.utils.FormatUtils;
+import com.ruffneck.cloudnote.utils.HtmlRegexUtils;
 
 import java.lang.reflect.Field;
 
@@ -32,6 +34,8 @@ public class AlarmActivity extends AppCompatActivity {
     private Note note;
     private Ringtone ringtone;
     private Vibrator vibrator;
+    private SharedPreferences mPref;
+    private String ringtoneUrlStr;
 
     @OnClick(R.id.bt_confirm)
     void onComfirm(View view) {
@@ -42,6 +46,7 @@ public class AlarmActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+        mPref = getSharedPreferences("confg", MODE_PRIVATE);
         setContentView(R.layout.activity_alarm);
         ButterKnife.inject(this);
 
@@ -52,7 +57,10 @@ public class AlarmActivity extends AppCompatActivity {
 
     private void initAlarm() {
 
-        Uri uri = RingtoneManager.getActualDefaultRingtoneUri(this, RingtoneManager.TYPE_ALARM);
+        ringtoneUrlStr = mPref.getString("ringtone",
+                RingtoneManager.getActualDefaultRingtoneUri(this, RingtoneManager.TYPE_RINGTONE).toString());
+
+        Uri uri = Uri.parse(ringtoneUrlStr);
 
         ringtone = RingtoneManager.getRingtone(this, uri);
         setLooping(ringtone);
@@ -90,7 +98,7 @@ public class AlarmActivity extends AppCompatActivity {
 //        System.out.println("note = " + note);
         tvAlarm.setText(FormatUtils.formatDate(note.getAlarm()));
         tvAlarmTitle.setText(note.getTitle());
-        tvAlarmContent.setText(note.getContent());
+        tvAlarmContent.setText(HtmlRegexUtils.filterHtml(note.getContent()));
     }
 
     @Override

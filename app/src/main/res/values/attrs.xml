@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="NoteRichEditor">
+        <attr name="editorHeight" format="integer" />
+        <attr name="fontSize" format="integer" />
+        <attr name="fontColor" format="color" />
+        <attr name="placeHolder" format="string" />
+    </declare-styleable>
+</resources>

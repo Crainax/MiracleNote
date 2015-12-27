@@ -1,5 +1,6 @@
 package com.ruffneck.cloudnote.activity;
 
+import android.app.ActivityOptions;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
@@ -229,7 +230,8 @@ public class MainActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_add_new_notebook:
-                startActivityForResult(new Intent(this, EditNoteBookActivity.class), REQUEST_CODE_NEW_BOOK);
+                startActivityForResult(new Intent(this, EditNoteBookActivity.class), REQUEST_CODE_NEW_BOOK,
+                        ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
                 break;
             //The notebook which is clicked.
             case R.id.action_cloud_upload:
@@ -242,7 +244,8 @@ public class MainActivity extends BaseActivity {
                 setDefaultFragment();
                 break;
             case R.id.action_setting:
-
+                startActivity(new Intent(this, SettingActivity.class), ActivityOptions
+                        .makeSceneTransitionAnimation(this).toBundle());
                 break;
             case R.id.action_user_info:
 
@@ -251,6 +254,7 @@ public class MainActivity extends BaseActivity {
                 AVUser.logOut();
                 Intent intent = new Intent(this, LoginActivity.class);
                 startActivity(intent);
+                finish();
                 break;
             default:
                 int notebookId = item.getItemId();
@@ -326,6 +330,7 @@ public class MainActivity extends BaseActivity {
         mCurrentFragment = fragment;
         FragmentManager fm = getFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         ft.replace(R.id.main_fragment, fragment);
         ft.commit();
     }

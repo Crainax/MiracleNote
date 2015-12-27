@@ -1,5 +1,6 @@
 package com.ruffneck.cloudnote.activity.fragment;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -50,7 +51,8 @@ public class AllNoteBookFragment extends MainFragment {
     public void onFabClick(FloatingActionButton fab) {
 
 
-        getMainActivity().startActivityForResult(new Intent(getMainActivity(), EditNoteBookActivity.class), getMainActivity().REQUEST_CODE_NEW_BOOK);
+        getMainActivity().startActivityForResult(new Intent(getMainActivity(), EditNoteBookActivity.class),
+                getMainActivity().REQUEST_CODE_NEW_BOOK, ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle());
 
 
 //        AVObject avObject = new AVObject("test");

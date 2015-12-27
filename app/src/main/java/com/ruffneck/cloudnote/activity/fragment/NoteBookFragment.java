@@ -14,6 +14,8 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
@@ -124,6 +126,9 @@ public class NoteBookFragment extends MainFragment {
                 popupMenu.show();
             }
         });
+
+        LayoutAnimationController lac = AnimationUtils.loadLayoutAnimation(getActivity(), R.anim.layout_all_notebook);
+        rvNote.setLayoutAnimation(lac);
     }
 
 
