@@ -98,6 +98,11 @@ public class AllNoteBookFragment extends MainFragment {
     }
 
     @Override
+    protected String toolbarTitle() {
+        return "所有笔记本";
+    }
+
+    @Override
     public void initToolbar(Toolbar toolbar) {
         super.initToolbar(toolbar);
         toolbar.setTitle("所有笔记本");

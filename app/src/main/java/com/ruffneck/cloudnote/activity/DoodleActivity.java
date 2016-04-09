@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.ruffneck.cloudnote.R;
+import com.ruffneck.cloudnote.dialog.ColorPicker;
 import com.ruffneck.cloudnote.utils.AlertDialogUtils;
 import com.ruffneck.cloudnote.utils.DateUtils;
 import com.ruffneck.cloudnote.view.DoodleImageView;
@@ -23,6 +24,7 @@ public class DoodleActivity extends BaseActivity {
 
     @InjectView(R.id.iv_doodle)
     DoodleImageView ivDoodle;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +56,20 @@ public class DoodleActivity extends BaseActivity {
                 setResult(RESULT_OK, intent);
                 finish();
                 break;
+            case R.id.action_doodle_color:
+                new ColorPicker(this, ivDoodle.getPenColor(), new ColorPicker.OnConfirmListener() {
+                    @Override
+                    public void onConfirm(int color) {
+                        ivDoodle.setPenColor(color);
+                    }
+                }).show();
+                break;
+            case R.id.action_paint_stroke_plus:
+                ivDoodle.setPenSize(ivDoodle.getPenSize() + 3);
+                break;
+            case R.id.action_paint_stroke_minus:
+                ivDoodle.setPenSize(ivDoodle.getPenSize() - 3);
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -66,8 +82,8 @@ public class DoodleActivity extends BaseActivity {
         File file = null;
         try {
             file = ivDoodle.save(filePath, fileName);
-            Toast.makeText(DoodleActivity.this, file.getAbsolutePath(), Toast.LENGTH_SHORT).show();
-            System.out.println("file = " + file.getAbsolutePath());
+            Toast.makeText(DoodleActivity.this, "涂鸦保存成功 :" + file.getAbsolutePath(), Toast.LENGTH_SHORT).show();
+//            System.out.println("涂鸦保存成功 :" + file.getAbsolutePath());
             return file.toURI();
         } catch (IOException e) {
             e.printStackTrace();

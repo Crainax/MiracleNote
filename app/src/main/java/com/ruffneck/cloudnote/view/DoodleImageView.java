@@ -23,15 +23,15 @@ public class DoodleImageView extends ImageView implements View.OnTouchListener {
 
     private int width;
     private int height;
-    private Context mContext;
     private Path mPath = new Path();
     private float mX;
     private float mY;
     private Paint mPaint;
     private Canvas mCanvas;
+    private int penColor = Color.BLACK;
+    private int penSize = 5;
 
     private Bitmap bitmap;
-    private int background = Color.WHITE;
 
     public DoodleImageView(Context context) {
         super(context);
@@ -59,7 +59,10 @@ public class DoodleImageView extends ImageView implements View.OnTouchListener {
 
         mPaint = new Paint();
         mPaint.setAntiAlias(true);
-        mPaint.setStrokeWidth(5);
+        mPaint.setStrokeWidth(penSize);
+        mPaint.setStrokeCap(Paint.Cap.ROUND);
+        mPaint.setStrokeJoin(Paint.Join.ROUND);
+        mPaint.setColor(penColor);
         mPaint.setStyle(Paint.Style.STROKE);
 
         mCanvas = new Canvas();
@@ -106,6 +109,8 @@ public class DoodleImageView extends ImageView implements View.OnTouchListener {
             case MotionEvent.ACTION_UP:
                 touchUp(event);
                 break;
+            default:
+                break;
         }
         invalidate();
         return true;
@@ -131,7 +136,6 @@ public class DoodleImageView extends ImageView implements View.OnTouchListener {
         if (!(dx > 3 || dy > 3)) return;
 
         mPath.quadTo(mX, mY, (mX + x) / 2, (mY + y) / 2);
-
         mX = x;
         mY = y;
     }
@@ -145,21 +149,22 @@ public class DoodleImageView extends ImageView implements View.OnTouchListener {
     public Bitmap getBitmap() {
         if (bitmap == null) {
             bitmap = Bitmap.createBitmap(width, height + 200, Bitmap.Config.RGB_565);
+            int background = Color.WHITE;
             bitmap.eraseColor(background);
         }
 
         return bitmap;
     }
 
-    public File save(String path,String fileName) throws IOException {
+    public File save(String path, String fileName) throws IOException {
 
         FileUtils.mkRootDir(path);
 
-        File file = new File(path+fileName);
+        File file = new File(path + fileName);
 
         OutputStream os = new FileOutputStream(file);
-
         bitmap.compress(Bitmap.CompressFormat.PNG, 90, os);
+        os.close();
 
         return file;
     }
@@ -172,4 +177,21 @@ public class DoodleImageView extends ImageView implements View.OnTouchListener {
         invalidate();
     }
 
+    public int getPenColor() {
+        return penColor;
+    }
+
+    public void setPenColor(int penColor) {
+        this.penColor = penColor;
+        mPaint.setColor(penColor);
+    }
+
+    public int getPenSize() {
+        return penSize;
+    }
+
+    public void setPenSize(int penSize) {
+        this.penSize = penSize;
+        mPaint.setStrokeWidth(penSize);
+    }
 }

@@ -199,9 +199,9 @@ public class LoginActivity extends AppCompatActivity implements IUiListener {
 
     /**
      * Show the view's animation when enter the activity.
+     *
      */
     private void showEnterAnim() {
-
         final int INIT_DELAY = 400;
         final int DURATION = 400;
 
@@ -219,7 +219,7 @@ public class LoginActivity extends AppCompatActivity implements IUiListener {
     }
 
     //Tencent callback interface.
-    @Override
+     @Override
     public void onComplete(Object o) {
         //{"ret":0,
         // "openid":"E0431F034A8EC56B40B5A7CCFAAE59BD",

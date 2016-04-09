@@ -1,7 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
+    <item
+        android:id="@+id/action_paint_stroke_plus"
+        android:icon="@drawable/ic_exposure_plus_1_24dp"
+        android:orderInCategory="300"
+        android:title="+1"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_paint_stroke_minus"
+        android:icon="@drawable/ic_exposure_minus_1_24dp"
+        android:orderInCategory="360"
+        android:title="-1"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_doodle_color"
+        android:icon="@drawable/ic_color_lens_24dp"
+        android:orderInCategory="400"
+        android:title="颜色"
+        app:showAsAction="always" />
     <item
         android:id="@+id/action_ok"
         android:icon="@drawable/ic_action_ok"

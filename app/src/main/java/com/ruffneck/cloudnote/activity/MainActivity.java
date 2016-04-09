@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Debug;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
@@ -78,14 +79,22 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Debug.startMethodTracing();
         initTransition();
         super.onCreate(savedInstanceState);
 
+        MainFragment mCurrentFragment;
         mPref = getSharedPreferences("config", MODE_PRIVATE);
         ButterKnife.inject(this);
 
         initDrawer();
         setDefaultFragment();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Debug.stopMethodTracing();
     }
 
     private void initTransition() {
@@ -244,7 +253,9 @@ public class MainActivity extends BaseActivity {
                 setDefaultFragment();
                 break;
             case R.id.action_setting:
-                startActivity(new Intent(this, SettingActivity.class), ActivityOptions
+//                refreshNotebookSubMenu();
+                startActivity(new Intent(this,
+                        SettingActivity.class), ActivityOptions
                         .makeSceneTransitionAnimation(this).toBundle());
                 break;
             case R.id.action_user_info:
@@ -361,3 +372,4 @@ public class MainActivity extends BaseActivity {
         return fabMain;
     }
 }
+

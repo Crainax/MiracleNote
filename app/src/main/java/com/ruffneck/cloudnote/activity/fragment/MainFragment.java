@@ -85,6 +85,7 @@ public abstract class MainFragment extends Fragment {
         final int color = toolbarColor();
 
         if (color == preColor) {
+            toolbar.setTitle(toolbarTitle());
             return;
         }
 

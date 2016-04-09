@@ -7,7 +7,7 @@ public class DBConstants {
     /**
      * Notebook table column.
      */
-    public class NoteBook {
+    public static class NoteBook {
         public static final String COLUMN_ID = "_id";
         public static final String COLUMN_NAME = "name";
         public static final String COLUMN_COLOR = "color";
@@ -29,7 +29,7 @@ public class DBConstants {
     /**
      * Note table column.
      */
-    public class Note {
+    public static class Note {
         public static final String COLUMN_ID = "_id";
         public static final String COLUMN_TITLE = "title";
         public static final String COLUMN_CONTENT = "content";
@@ -46,7 +46,7 @@ public class DBConstants {
     /**
      * Type table column.
      */
-    public class Type {
+    public static class Type {
         public static final String COLUMN_ID = "_id";
         public static final String COLUMN_TYPE = "type";
         public static final int TYPE_IMAGE = 0x001;
@@ -57,7 +57,7 @@ public class DBConstants {
     /**
      * Attach table column.
      */
-    public class Attach {
+    public static class Attach {
         public static final String COLUMN_ID = "_id";
         public static final String COLUMN_NOTE = "note";
         public static final String COLUMN_TYPE_ID = "type_id";
