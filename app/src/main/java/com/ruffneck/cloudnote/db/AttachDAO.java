@@ -21,7 +21,6 @@ public class AttachDAO {
 
     public static AttachDAO attachDAO;
     private Context mContext;
-
     public synchronized static AttachDAO getInstance(Context context) {
         if (attachDAO == null)
             attachDAO = new AttachDAO(context);
@@ -53,7 +52,6 @@ public class AttachDAO {
         long id = database.insert(DBConstants.Attach.TABLE_NAME, null, values);
         attach.setId(id);
         close();
-
         return id;
     }
 

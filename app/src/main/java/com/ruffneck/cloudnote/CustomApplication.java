@@ -7,6 +7,7 @@ import android.content.Intent;
 
 import com.avos.avoscloud.AVOSCloud;
 import com.avos.avoscloud.AVObject;
+import com.facebook.stetho.Stetho;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.cache.memory.impl.WeakMemoryCache;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -44,8 +45,10 @@ public class CustomApplication extends Application {
         initImageLoader();
 
         initAlarm();
-    }
+//        Stetho.initializeWithDefaults(this);
+        Stetho.initializeWithDefaults(this);
 
+    }
 
     /**
      * Initialize the alarm in the background by the alarmManager.

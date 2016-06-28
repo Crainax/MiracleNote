@@ -165,7 +165,6 @@ public class DoodleImageView extends ImageView implements View.OnTouchListener {
         OutputStream os = new FileOutputStream(file);
         bitmap.compress(Bitmap.CompressFormat.PNG, 90, os);
         os.close();
-
         return file;
     }
 
